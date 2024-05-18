@@ -12,7 +12,8 @@ internal class Program
         builder.ConfigureServices(services =>
         {
             services.AddSingleton<JokeService>();
-            services.AddHostedService<SampleWindowsBackgroundService>();
+            //services.AddHostedService<SampleWindowsBackgroundService>();
+            services.AddHostedService<ProcessListenerBackgroundService>();
         });
     }
 
@@ -30,6 +31,7 @@ internal class Program
         builder.ConfigureLogging(opt =>
         {
             opt.ClearProviders();
+            opt.AddConsole();
             opt.AddEventLog(logSettings);
         });
     }
