@@ -13,7 +13,7 @@ internal class Program
         {
             services.AddSingleton<JokeService>();
             //services.AddHostedService<SampleWindowsBackgroundService>();
-            services.AddHostedService<ProcessListenerBackgroundService>();
+            services.AddHostedService<EtwProcessListenerBackgroundService>();
         });
     }
 
