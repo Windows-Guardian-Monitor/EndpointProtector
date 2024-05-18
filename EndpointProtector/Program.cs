@@ -1,5 +1,4 @@
 using EndpointProtector.BackgroundServices;
-using EndpointProtector.Services;
 using Microsoft.Extensions.Logging.EventLog;
 
 internal class Program
@@ -11,9 +10,10 @@ internal class Program
     {
         builder.ConfigureServices(services =>
         {
-            services.AddSingleton<JokeService>();
+            //services.AddSingleton<JokeService>();
             //services.AddHostedService<SampleWindowsBackgroundService>();
             services.AddHostedService<EtwProcessListenerBackgroundService>();
+            services.AddHostedService<WmiProcessListenerBackgroundService>();
         });
     }
 
