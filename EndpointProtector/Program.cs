@@ -12,8 +12,10 @@ internal class Program
         {
             //services.AddSingleton<JokeService>();
             //services.AddHostedService<SampleWindowsBackgroundService>();
-            services.AddHostedService<EtwProcessListenerBackgroundService>();
+            
+            
             services.AddHostedService<WmiProcessListenerBackgroundService>();
+            services.AddHostedService<EtwProcessListenerBackgroundService>();
         });
     }
 
