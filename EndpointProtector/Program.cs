@@ -11,11 +11,14 @@ internal class Program
         builder.ConfigureServices(services =>
         {
             //services.AddSingleton<JokeService>();
+            
+            
+            //services.AddHostedService<WmiProcessListenerBackgroundService>();
+            //services.AddHostedService<EtwProcessListenerBackgroundService>();
+            
             //services.AddHostedService<SampleWindowsBackgroundService>();
             
-            
-            services.AddHostedService<WmiProcessListenerBackgroundService>();
-            services.AddHostedService<EtwProcessListenerBackgroundService>();
+            services.AddHostedService<MonitorBackgroundService>();
         });
     }
 
