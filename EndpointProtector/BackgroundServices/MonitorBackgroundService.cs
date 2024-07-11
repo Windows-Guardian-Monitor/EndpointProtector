@@ -1,5 +1,5 @@
 ﻿using EndpointProtector.Models.Ram;
-using Microsoft.Diagnostics.Tracing.Parsers;
+using System.Diagnostics;
 using Vanara.PInvoke;
 
 namespace EndpointProtector.BackgroundServices
@@ -13,12 +13,22 @@ namespace EndpointProtector.BackgroundServices
             var rInfo = new RamInfo(buff.dwMemoryLoad, buff.ullTotalPhys, buff.ullAvailPhys);
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        private async ValueTask GetCpuInformation()
+        {
+            var cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+
+            while (true)
+            {
+                await Console.Out.WriteLineAsync(cpuCounter.NextValue() + "%");
+                await Task.Delay(TimeSpan.FromSeconds(1));
+            }
+        }
+
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             GetMemoryInformation();
 
-
-            return Task.CompletedTask;
+            await GetCpuInformation();
         }
     }
 }
