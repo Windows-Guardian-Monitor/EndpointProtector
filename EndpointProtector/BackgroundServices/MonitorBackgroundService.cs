@@ -1,4 +1,6 @@
-﻿using EndpointProtector.Models.Ram;
+﻿using EndpointProtector.Extensions;
+using EndpointProtector.Models.Disk;
+using EndpointProtector.Models.Ram;
 using System.Diagnostics;
 using Vanara.PInvoke;
 
@@ -10,7 +12,7 @@ namespace EndpointProtector.BackgroundServices
         {
             var buff = Kernel32.MEMORYSTATUSEX.Default;
             Kernel32.GlobalMemoryStatusEx(ref buff);
-            var rInfo = new RamInfo(buff.dwMemoryLoad, buff.ullTotalPhys, buff.ullAvailPhys);
+            var rInfo = new RamInfo(buff.dwMemoryLoad, (long)buff.ullTotalPhys, (long)buff.ullAvailPhys);
         }
 
         private async ValueTask GetCpuInformation()
@@ -24,11 +26,35 @@ namespace EndpointProtector.BackgroundServices
             }
         }
 
+        private void GetDiskInfo()
+        {
+            var drives = DriveInfo.GetDrives();
+            var disks = new DiskInfo[drives.Length];
+
+            for (var i = 0; i < drives.Length; i++)
+            {
+                var drive = drives[i];
+
+                var availableSize = drive.AvailableFreeSpace.ConvertToStorage();
+                var totalSize = drive.TotalSize.ConvertToStorage();
+
+                disks[i] = new DiskInfo
+                {
+                    DiskName = drive.Name,
+                    AvailableSize = availableSize,
+                    TotalSize = totalSize,
+                    DiskType = drive.DriveFormat
+                };
+            }
+        }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             GetMemoryInformation();
 
-            await GetCpuInformation();
+            //await GetCpuInformation();
+
+            GetDiskInfo();
         }
     }
 }
