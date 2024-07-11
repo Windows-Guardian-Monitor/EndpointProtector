@@ -8,14 +8,14 @@ namespace EndpointProtector.BackgroundServices
 {
     internal class MonitorBackgroundService : BackgroundService
     {      
-        private void GetMemoryInformation()
+        private static void GetMemoryInformation()
         {
             var buff = Kernel32.MEMORYSTATUSEX.Default;
             Kernel32.GlobalMemoryStatusEx(ref buff);
             var rInfo = new RamInfo(buff.dwMemoryLoad, (long)buff.ullTotalPhys, (long)buff.ullAvailPhys);
         }
 
-        private async ValueTask GetCpuInformation()
+        private static async ValueTask GetCpuInformation()
         {
             var cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
 
@@ -26,7 +26,7 @@ namespace EndpointProtector.BackgroundServices
             }
         }
 
-        private void GetDiskInfo()
+        private static void GetDiskInfo()
         {
             var drives = DriveInfo.GetDrives();
             var disks = new DiskInfo[drives.Length];
@@ -48,13 +48,15 @@ namespace EndpointProtector.BackgroundServices
             }
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             GetMemoryInformation();
 
             //await GetCpuInformation();
 
             GetDiskInfo();
+
+            return Task.CompletedTask;
         }
     }
 }
