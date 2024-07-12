@@ -1,13 +1,14 @@
-﻿using EndpointProtector.Extensions;
+﻿using EndpointProtector.Models.Cpu;
 using EndpointProtector.Models.Disk;
 using EndpointProtector.Models.Ram;
 using System.Diagnostics;
+using System.Management;
 using Vanara.PInvoke;
 
 namespace EndpointProtector.BackgroundServices
 {
     internal class MonitorBackgroundService : BackgroundService
-    {      
+    {
         private static void GetMemoryInformation()
         {
             var buff = Kernel32.MEMORYSTATUSEX.Default;
@@ -15,7 +16,7 @@ namespace EndpointProtector.BackgroundServices
             var rInfo = new RamInfo(buff.dwMemoryLoad, (long)buff.ullTotalPhys, (long)buff.ullAvailPhys);
         }
 
-        private static async ValueTask GetCpuInformation()
+        private static async ValueTask GetCpuUsage()
         {
             var cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
 
@@ -35,17 +36,20 @@ namespace EndpointProtector.BackgroundServices
             {
                 var drive = drives[i];
 
-                var availableSize = drive.AvailableFreeSpace.ConvertToStorage();
-                var totalSize = drive.TotalSize.ConvertToStorage();
-
-                disks[i] = new DiskInfo
-                {
-                    DiskName = drive.Name,
-                    AvailableSize = availableSize,
-                    TotalSize = totalSize,
-                    DiskType = drive.DriveFormat
-                };
+                disks[i] = new DiskInfo(drive.AvailableFreeSpace, drive.TotalSize, drive.Name, drive.DriveFormat);
             }
+        }
+
+        private static void GetCpuNominalInformation()
+        {
+            var cpu = new ManagementObjectSearcher("select * from Win32_Processor").Get().Cast<ManagementObject>().First();
+
+            var architecture = (ushort)cpu["Architecture"];
+            var name = (string)cpu["Name"];
+            var manufacturer = (string)cpu["Manufacturer"];
+            var caption = (string)cpu["Caption"];
+
+            var cpuInfo = new CpuInfo(name, caption, architecture, manufacturer);
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -55,6 +59,8 @@ namespace EndpointProtector.BackgroundServices
             //await GetCpuInformation();
 
             GetDiskInfo();
+
+            GetCpuNominalInformation();
 
             return Task.CompletedTask;
         }
