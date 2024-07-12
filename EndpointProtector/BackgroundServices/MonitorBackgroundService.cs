@@ -15,6 +15,10 @@ namespace EndpointProtector.BackgroundServices
             var buff = Kernel32.MEMORYSTATUSEX.Default;
             Kernel32.GlobalMemoryStatusEx(ref buff);
             var rInfo = new RamInfo(buff.dwMemoryLoad, (long)buff.ullTotalPhys, (long)buff.ullAvailPhys);
+
+            Console.WriteLine("MEMORY INFO");
+            Console.WriteLine(rInfo);
+            Console.WriteLine("\n\n");
         }
 
         private static async ValueTask GetCpuUsage()
@@ -33,12 +37,18 @@ namespace EndpointProtector.BackgroundServices
             var drives = DriveInfo.GetDrives();
             var disks = new DiskInfo[drives.Length];
 
+            Console.WriteLine("DISK INFO");
+
             for (var i = 0; i < drives.Length; i++)
             {
                 var drive = drives[i];
 
                 disks[i] = new DiskInfo(drive.AvailableFreeSpace, drive.TotalSize, drive.Name, drive.DriveFormat);
+
+                Console.WriteLine(disks[0]);
             }
+
+            Console.WriteLine("\n\n");
         }
 
         private static void GetCpuNominalInformation()
@@ -50,7 +60,11 @@ namespace EndpointProtector.BackgroundServices
             var manufacturer = (string)cpu["Manufacturer"];
             var caption = (string)cpu["Caption"];
 
+            Console.WriteLine("CPU INFO");
+
             var cpuInfo = new CpuInfo(name, caption, architecture, manufacturer);
+            Console.WriteLine(cpuInfo);
+            Console.WriteLine("\n\n");
         }
 
         private static void GetOsInformation()
@@ -64,7 +78,10 @@ namespace EndpointProtector.BackgroundServices
             var manufacturer = (string)wmi["Manufacturer"];
             var systemDrive = (string)wmi["SystemDrive"];
 
+            Console.WriteLine("OS INFO");
             var osInfo = new OsInfo(description, version,architecture, serialNumber, manufacturer, systemDrive);
+            Console.WriteLine(osInfo);
+            Console.WriteLine("\n\n");
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
