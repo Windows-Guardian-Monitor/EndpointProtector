@@ -1,5 +1,6 @@
 ﻿using EndpointProtector.Models.Cpu;
 using EndpointProtector.Models.Disk;
+using EndpointProtector.Models.OperatingSystem;
 using EndpointProtector.Models.Ram;
 using System.Diagnostics;
 using System.Management;
@@ -52,6 +53,20 @@ namespace EndpointProtector.BackgroundServices
             var cpuInfo = new CpuInfo(name, caption, architecture, manufacturer);
         }
 
+        private static void GetOsInformation()
+        {
+            var wmi = new ManagementObjectSearcher("select * from Win32_OperatingSystem").Get().Cast<ManagementObject>().First();
+
+            var description = ((string)wmi["Caption"]).Trim();
+            var version = (string)wmi["Version"];
+            var architecture = (string)wmi["OSArchitecture"];
+            var serialNumber = (string)wmi["SerialNumber"];
+            var manufacturer = (string)wmi["Manufacturer"];
+            var systemDrive = (string)wmi["SystemDrive"];
+
+            var osInfo = new OsInfo(description, version,architecture, serialNumber, manufacturer, systemDrive);
+        }
+
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             GetMemoryInformation();
@@ -61,6 +76,8 @@ namespace EndpointProtector.BackgroundServices
             GetDiskInfo();
 
             GetCpuNominalInformation();
+
+            GetOsInformation();
 
             return Task.CompletedTask;
         }
