@@ -1,6 +1,8 @@
-﻿namespace EndpointProtector.Models.OperatingSystem
+﻿using EndpointProtector.Contracts.Models;
+
+namespace EndpointProtector.Business.Models
 {
-    internal record OsInfo
+    internal record OsInfo : IOsInfo
     {
         public string Description { get; set; }
         public string VersionStr { get; set; }

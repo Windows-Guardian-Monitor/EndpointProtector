@@ -1,7 +1,7 @@
-﻿using EndpointProtector.Models.Cpu;
-using EndpointProtector.Models.Disk;
-using EndpointProtector.Models.OperatingSystem;
-using EndpointProtector.Models.Ram;
+﻿using EndpointProtector.Business.Models;
+using EndpointProtector.Contracts.DAL;
+using EndpointProtector.Contracts.Models;
+using LiteDB;
 using System.Diagnostics;
 using System.Management;
 using Vanara.PInvoke;
@@ -10,6 +10,13 @@ namespace EndpointProtector.BackgroundServices
 {
     internal class MonitorBackgroundService : BackgroundService
     {
+        private readonly IRepository<ICpuInfo> _cpuInfoRepository;
+
+        public MonitorBackgroundService(IRepository<ICpuInfo> cpuInfoRepository)
+        {
+            _cpuInfoRepository = cpuInfoRepository;
+        }
+
         private static void GetMemoryInformation()
         {
             var buff = Kernel32.MEMORYSTATUSEX.Default;
@@ -51,7 +58,7 @@ namespace EndpointProtector.BackgroundServices
             Console.WriteLine("\n\n");
         }
 
-        private static void GetCpuNominalInformation()
+        private static CpuInfo GetCpuNominalInformation()
         {
             var cpu = new ManagementObjectSearcher("select * from Win32_Processor").Get().Cast<ManagementObject>().First();
 
@@ -62,9 +69,7 @@ namespace EndpointProtector.BackgroundServices
 
             Console.WriteLine("CPU INFO");
 
-            var cpuInfo = new CpuInfo(name, caption, architecture, manufacturer);
-            Console.WriteLine(cpuInfo);
-            Console.WriteLine("\n\n");
+            return new CpuInfo(name, caption, architecture, manufacturer);
         }
 
         private static void GetOsInformation()
@@ -79,23 +84,14 @@ namespace EndpointProtector.BackgroundServices
             var systemDrive = (string)wmi["SystemDrive"];
 
             Console.WriteLine("OS INFO");
-            var osInfo = new OsInfo(description, version,architecture, serialNumber, manufacturer, systemDrive);
+            var osInfo = new OsInfo(description, version, architecture, serialNumber, manufacturer, systemDrive);
             Console.WriteLine(osInfo);
             Console.WriteLine("\n\n");
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            GetMemoryInformation();
-
-            //await GetCpuInformation();
-
-            GetDiskInfo();
-
-            GetCpuNominalInformation();
-
-            GetOsInformation();
-
+           
             return Task.CompletedTask;
         }
     }
