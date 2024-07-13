@@ -1,15 +1,15 @@
-﻿using EndpointProtector.Contracts.DAL;
+﻿using EndpointProtector.Contracts;
+using EndpointProtector.Contracts.DAL;
 using EndpointProtector.Contracts.Models;
-using EndpointProtector.Database;
 using EndpointProtector.Database.Models;
 
 namespace EndpointProtector.DAL
 {
     internal class DiskInfoRepository : IDiskInfoRepository
     {
-        private readonly MonitoringContext _monitoringContext;
+        private readonly IDatabaseContext _monitoringContext;
 
-        public DiskInfoRepository(MonitoringContext monitoringContext)
+        public DiskInfoRepository(IDatabaseContext monitoringContext)
         {
             _monitoringContext = monitoringContext;
         }
