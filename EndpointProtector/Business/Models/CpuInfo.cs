@@ -1,13 +1,15 @@
-﻿using EndpointProtector.Enums;
+﻿using EndpointProtector.Contracts.Models;
+using EndpointProtector.Enums;
 
-namespace EndpointProtector.Models.Cpu
+namespace EndpointProtector.Business.Models
 {
-    internal record CpuInfo
+    internal record CpuInfo : ICpuInfo
     {
         public string? Name { get; set; }
         public string? Description { get; set; }
         public Architecture Architecture { get; set; }
         public string Manufacturer { get; set; }
+        public int Id { get; set; }
 
         public CpuInfo(string? name, string? description, ushort architecture, string manufacturer)
         {

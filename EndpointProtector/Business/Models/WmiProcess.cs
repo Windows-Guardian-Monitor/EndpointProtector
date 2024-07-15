@@ -1,4 +1,4 @@
-﻿namespace EndpointProtector.Models
+﻿namespace EndpointProtector.Business.Models
 {
 
     public class WmiProcess

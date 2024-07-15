@@ -1,4 +1,5 @@
-﻿using EndpointProtector.Models;
+﻿using EndpointProtector.Business.Models;
+using EndpointProtector.Models;
 using System.Diagnostics;
 using System.Management;
 

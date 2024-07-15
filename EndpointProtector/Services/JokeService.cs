@@ -1,4 +1,4 @@
-﻿using EndpointProtector.Models;
+﻿using EndpointProtector.Business.Models;
 
 namespace EndpointProtector.Services;
 
