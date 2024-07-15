@@ -1,6 +1,6 @@
-﻿namespace EndpointProtector.Contracts.DAL
+﻿namespace Common.Contracts.DAL
 {
-    internal interface IRepository<T> where T : class
+    public interface IRepository<T> where T : class
     {
         void Delete(int id);
 

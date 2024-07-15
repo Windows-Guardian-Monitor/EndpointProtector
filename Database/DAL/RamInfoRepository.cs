@@ -1,11 +1,10 @@
-﻿using EndpointProtector.Contracts;
-using EndpointProtector.Contracts.DAL;
-using EndpointProtector.Contracts.Models;
+﻿using Common.Contracts.DAL;
+using Common.Contracts.Models;
 using EndpointProtector.Database.Models;
 
-namespace EndpointProtector.DAL
+namespace Database.DAL
 {
-    internal class RamInfoRepository(IDatabaseContext databaseContext) : IRepository<IRamInfo>
+    public class RamInfoRepository(IDatabaseContext databaseContext) : IRepository<IRamInfo>
     {
         public void Delete(int id) => databaseContext.GetSpecificCollection<DbRamInfo>().Delete(id);
 

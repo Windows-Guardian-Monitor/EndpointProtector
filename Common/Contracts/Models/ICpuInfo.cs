@@ -1,8 +1,8 @@
-﻿using EndpointProtector.Enums;
+﻿using System.Runtime.InteropServices;
 
-namespace EndpointProtector.Contracts.Models
+namespace Common.Contracts.Models
 {
-    internal interface ICpuInfo
+    public interface ICpuInfo
     {
         public int Id { get; set; }
         Architecture Architecture { get; set; }

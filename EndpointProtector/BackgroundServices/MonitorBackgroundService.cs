@@ -1,8 +1,7 @@
-﻿using EndpointProtector.Business.Models;
-using EndpointProtector.Contracts.DAL;
-using EndpointProtector.Contracts.Models;
+﻿using Common.Contracts.DAL;
+using Common.Contracts.Models;
+using EndpointProtector.Business.Models;
 using LiteDB;
-using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsTCPIP;
 using System.Diagnostics;
 using System.Management;
 using Vanara.PInvoke;

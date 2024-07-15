@@ -1,5 +1,5 @@
-﻿using EndpointProtector.Contracts.Models;
-using EndpointProtector.Enums;
+﻿using Common.Contracts.Models;
+using System.Runtime.InteropServices;
 
 namespace EndpointProtector.Database.Models
 {

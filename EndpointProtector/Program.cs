@@ -1,8 +1,8 @@
+using Common.Contracts.DAL;
+using Common.Contracts.Models;
+using Database;
+using Database.DAL;
 using EndpointProtector.BackgroundServices;
-using EndpointProtector.Contracts;
-using EndpointProtector.Contracts.DAL;
-using EndpointProtector.Contracts.Models;
-using EndpointProtector.DAL;
 using EndpointProtector.Database;
 using Microsoft.Extensions.Logging.EventLog;
 

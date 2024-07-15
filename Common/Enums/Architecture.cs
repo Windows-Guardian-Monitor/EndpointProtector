@@ -1,4 +1,4 @@
-﻿namespace EndpointProtector.Enums
+﻿namespace Common.Enums
 {
     /// <summary>
     /// https://learn.microsoft.com/en-us/uwp/api/windows.system.processorarchitecture?view=winrt-22621

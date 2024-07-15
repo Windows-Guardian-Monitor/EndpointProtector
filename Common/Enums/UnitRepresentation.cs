@@ -1,6 +1,6 @@
-﻿namespace EndpointProtector.Enums
+﻿namespace Common.Enums
 {
-    internal enum UnitRepresentation
+    public enum UnitRepresentation
     {
         B = 0,
         KB = 1,

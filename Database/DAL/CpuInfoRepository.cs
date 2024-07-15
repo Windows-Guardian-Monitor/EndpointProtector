@@ -1,15 +1,14 @@
-﻿using EndpointProtector.Contracts;
-using EndpointProtector.Contracts.DAL;
-using EndpointProtector.Contracts.Models;
+﻿using Common.Contracts.DAL;
+using Common.Contracts.Models;
 using EndpointProtector.Database.Models;
 
-namespace EndpointProtector.DAL
+namespace Database.DAL
 {
-    internal class CpuInfoRepository(IDatabaseContext monitoringContext) : IRepository<ICpuInfo>
+    public class CpuInfoRepository(IDatabaseContext monitoringContext) : IRepository<ICpuInfo>
     {
         private bool _disposed = false;
 
-        public void Delete(int id) => 
+        public void Delete(int id) =>
             monitoringContext.GetSpecificCollection<DbCpuInfo>().Delete(id);
 
         public ICpuInfo? GetFirst() =>

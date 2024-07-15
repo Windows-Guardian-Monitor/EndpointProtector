@@ -1,4 +1,4 @@
-﻿using EndpointProtector.Contracts;
+﻿using Database;
 using LiteDB;
 
 namespace EndpointProtector.Database

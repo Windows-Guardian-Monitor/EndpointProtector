@@ -1,7 +1,7 @@
 ﻿using Common.Enums;
 using EndpointProtector.Models.Ram;
 
-namespace EndpointProtector.Extensions
+namespace Common.Extensions
 {
     internal static class LongExtensions
     {
