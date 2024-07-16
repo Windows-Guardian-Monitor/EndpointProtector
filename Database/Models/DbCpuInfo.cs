@@ -1,9 +1,9 @@
 ﻿using Common.Contracts.Models;
 using System.Runtime.InteropServices;
 
-namespace EndpointProtector.Database.Models
+namespace Database.Models
 {
-    internal class DbCpuInfo : ICpuInfo
+    public record DbCpuInfo : ICpuInfo
     {
         public int Id { get; set; }
         public Architecture Architecture { get; set; }

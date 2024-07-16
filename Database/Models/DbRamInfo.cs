@@ -1,12 +1,15 @@
 ﻿using Common.Contracts.Models;
 using EndpointProtector.Models.Ram;
 
-namespace EndpointProtector.Database.Models
+namespace Database.Models
 {
-    internal class DbRamInfo : IRamInfo
+    internal class DbRamInfo : IRamNominalInfo
     {
-        public Storage AvailableMemory { get; set; }
-        public uint PercentOfMemoryUsage { get; set; }
-        public Storage UsedMemory { get; set; }
+        public int Id { get; set; }
+        public Storage TotalMemory { get; set; }
+        public string Description { get; set; }
+        public string Manufacturer { get; set; }
+        public uint Speed { get; set; }
     }
 }
+

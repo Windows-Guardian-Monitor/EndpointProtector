@@ -1,6 +1,6 @@
 ﻿using Common.Contracts.DAL;
 using Common.Contracts.Models;
-using EndpointProtector.Database.Models;
+using Database.Models;
 
 namespace Database.DAL
 {
@@ -25,5 +25,7 @@ namespace Database.DAL
 
             databaseContext.GetSpecificCollection<DbOsInfo>().Insert(dbOsInfo);
         }
+
+        public IEnumerable<IOsInfo> GetAll() => databaseContext.GetSpecificCollection<DbOsInfo>().FindAll();
     }
 }

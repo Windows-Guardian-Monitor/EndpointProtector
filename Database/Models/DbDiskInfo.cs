@@ -1,7 +1,7 @@
 ﻿using Common.Contracts.Models;
 using EndpointProtector.Models.Ram;
 
-namespace EndpointProtector.Database.Models
+namespace Database.Models
 {
     internal class DbDiskInfo : IDiskInfo
     {

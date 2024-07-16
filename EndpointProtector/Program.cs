@@ -1,9 +1,11 @@
 using Common.Contracts.DAL;
 using Common.Contracts.Models;
+using Common.Contracts.Providers;
 using Database;
 using Database.DAL;
 using EndpointProtector.BackgroundServices;
 using EndpointProtector.Database;
+using EndpointProtector.Rules;
 using Microsoft.Extensions.Logging.EventLog;
 
 internal class Program
@@ -25,11 +27,19 @@ internal class Program
 
             services.AddTransient<IRepository<ICpuInfo>, CpuInfoRepository>();
             services.AddTransient<IRepository<IOsInfo>, OsInfoRepository>();
-            services.AddTransient<IRepository<IRamInfo>, RamInfoRepository>();
+            services.AddTransient<IRepository<IRamNominalInfo>, RamInfoRepository>();
             services.AddTransient<IDiskInfoRepository, DiskInfoRepository>();
+            services.AddTransient<ICpuUsageRepository, CpuUsageInfoRepository>();
+            services.AddTransient<IWindowsWorkstationRepository, WindowsWorkstationRepository>();
+
+            services.AddTransient<IPeriodicTimerProvider, PeriodicTimerProvider>();
 
             services.AddSingleton<IDatabaseContext, MonitoringContext>();
-            services.AddHostedService<MonitorBackgroundService>();
+
+            //services.AddHostedService<MonitorBackgroundService>();
+            services.AddHostedService<CpuUsageBackgroundService>();
+            services.AddHostedService<RamInfoBackgroundService>();
+            services.AddHostedService<SynchronizationBackgroundService>();
         });
     }
 
@@ -54,6 +64,8 @@ internal class Program
 
     private static void Main(string[] args)
     {
+        System.Diagnostics.Debugger.Launch();
+
         var builder = Host.CreateDefaultBuilder(args);
 
         DatabaseConfiguringService.CreateFolder();

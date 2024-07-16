@@ -1,25 +1,28 @@
 ﻿using Common.Contracts.DAL;
 using Common.Contracts.Models;
-using EndpointProtector.Database.Models;
+using Database.Models;
 
 namespace Database.DAL
 {
-    public class RamInfoRepository(IDatabaseContext databaseContext) : IRepository<IRamInfo>
+    public class RamInfoRepository(IDatabaseContext databaseContext) : IRepository<IRamNominalInfo>
     {
         public void Delete(int id) => databaseContext.GetSpecificCollection<DbRamInfo>().Delete(id);
 
-        public IRamInfo? GetFirst() => databaseContext.GetSpecificCollection<DbRamInfo>().FindOne(item => item != null);
+        public IRamNominalInfo? GetFirst() => databaseContext.GetSpecificCollection<DbRamInfo>().FindOne(item => item != null);
 
-        public void Insert(IRamInfo item)
+        public void Insert(IRamNominalInfo item)
         {
             var dbRamInfo = new DbRamInfo
             {
-                AvailableMemory = item.AvailableMemory,
-                PercentOfMemoryUsage = item.PercentOfMemoryUsage,
-                UsedMemory = item.UsedMemory
+                TotalMemory = item.TotalMemory,
+                Speed = item.Speed,
+                Description = item.Description,
+                Manufacturer = item.Manufacturer
             };
 
             databaseContext.GetSpecificCollection<DbRamInfo>().Insert(dbRamInfo);
         }
+
+        public IEnumerable<IRamNominalInfo> GetAll() => databaseContext.GetSpecificCollection<DbRamInfo>().FindAll();
     }
 }

@@ -1,9 +1,8 @@
-﻿using Database;
-using LiteDB;
+﻿using LiteDB;
 
-namespace EndpointProtector.Database
+namespace Database
 {
-    internal class MonitoringContext : IDatabaseContext, IDisposable
+    public class MonitoringContext : IDatabaseContext, IDisposable
     {
         private LiteDatabase _database;
 

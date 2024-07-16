@@ -7,5 +7,7 @@
         T? GetFirst();
 
         void Insert(T item);
+
+        IEnumerable<T> GetAll();
     }
 }

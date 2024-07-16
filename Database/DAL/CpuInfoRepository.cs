@@ -1,18 +1,18 @@
 ﻿using Common.Contracts.DAL;
 using Common.Contracts.Models;
-using EndpointProtector.Database.Models;
+using Database.Models;
 
 namespace Database.DAL
 {
-    public class CpuInfoRepository(IDatabaseContext monitoringContext) : IRepository<ICpuInfo>
+    public class CpuInfoRepository(IDatabaseContext databaseContext) : IRepository<ICpuInfo>
     {
         private bool _disposed = false;
 
         public void Delete(int id) =>
-            monitoringContext.GetSpecificCollection<DbCpuInfo>().Delete(id);
+            databaseContext.GetSpecificCollection<DbCpuInfo>().Delete(id);
 
         public ICpuInfo? GetFirst() =>
-            monitoringContext.GetSpecificCollection<DbCpuInfo>()?.FindOne(item => item != null);
+            databaseContext.GetSpecificCollection<DbCpuInfo>()?.FindOne(item => item != null);
 
         public void Insert(ICpuInfo cpuInfo)
         {
@@ -24,10 +24,12 @@ namespace Database.DAL
                 Name = cpuInfo.Name,
             };
 
-            var collection = monitoringContext.GetSpecificCollection<DbCpuInfo>();
+            var collection = databaseContext.GetSpecificCollection<DbCpuInfo>();
 
             collection.Insert(dbCpuInfo);
         }
+
+        public IEnumerable<ICpuInfo> GetAll() => databaseContext.GetSpecificCollection<DbCpuInfo>().FindAll();
 
         protected virtual void Dispose(bool disposing)
         {
@@ -35,7 +37,7 @@ namespace Database.DAL
             {
                 if (disposing)
                 {
-                    monitoringContext.Dispose();
+                    databaseContext.Dispose();
                 }
             }
 
@@ -46,6 +48,6 @@ namespace Database.DAL
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
+        }        
     }
 }

@@ -1,23 +1,23 @@
 ﻿using Common.Contracts.DAL;
 using Common.Contracts.Models;
-using EndpointProtector.Database.Models;
+using Database.Models;
 
 namespace Database.DAL
 {
     public class DiskInfoRepository : IDiskInfoRepository
     {
-        private readonly IDatabaseContext _monitoringContext;
+        private readonly IDatabaseContext _databaseContext;
 
         public DiskInfoRepository(IDatabaseContext monitoringContext)
         {
-            _monitoringContext = monitoringContext;
+            _databaseContext = monitoringContext;
         }
 
         public void Delete(int id) =>
-            _monitoringContext.GetSpecificCollection<DbDiskInfo>().Delete(id);
+            _databaseContext.GetSpecificCollection<DbDiskInfo>().Delete(id);
 
         public IDiskInfo? GetFirst() =>
-            _monitoringContext.GetSpecificCollection<DbDiskInfo>().FindOne(disk => disk != null);
+            _databaseContext.GetSpecificCollection<DbDiskInfo>().FindOne(disk => disk != null);
 
         public void Insert(IEnumerable<IDiskInfo> diskInfos)
         {
@@ -47,7 +47,9 @@ namespace Database.DAL
                 TotalSize = item.TotalSize,
             };
 
-            _monitoringContext.GetSpecificCollection<DbDiskInfo>().Insert(diskInfo);
+            _databaseContext.GetSpecificCollection<DbDiskInfo>().Insert(diskInfo);
         }
+
+        public IEnumerable<IDiskInfo> GetAll() => _databaseContext.GetSpecificCollection<DbDiskInfo>().FindAll();
     }
 }

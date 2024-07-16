@@ -1,6 +1,6 @@
 ﻿using Common.Contracts.Models;
 
-namespace EndpointProtector.Database.Models
+namespace Database.Models
 {
     internal class DbOsInfo : IOsInfo
     {
