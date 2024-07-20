@@ -3,9 +3,9 @@ using Common.Contracts.Models;
 using Common.Contracts.Providers;
 using Database;
 using Database.DAL;
-using EndpointProtector.BackgroundServices;
 using EndpointProtector.Database;
 using EndpointProtector.Rules;
+using EndpointProtector.Services;
 using Microsoft.Extensions.Logging.EventLog;
 
 internal class Program
@@ -17,14 +17,6 @@ internal class Program
     {
         builder.ConfigureServices(services =>
         {
-            //services.AddSingleton<JokeService>();
-
-
-            //services.AddHostedService<WmiProcessListenerBackgroundService>();
-            //services.AddHostedService<EtwProcessListenerBackgroundService>();
-
-            //services.AddHostedService<SampleWindowsBackgroundService>();
-
             services.AddTransient<IRamUsageInfoRepository, RamUsageRepository>();
             services.AddTransient<ICpuUsageRepository, CpuUsageInfoRepository>();
             services.AddTransient<IWindowsWorkstationRepository, WindowsWorkstationRepository>();
@@ -33,9 +25,10 @@ internal class Program
 
             services.AddSingleton<IDatabaseContext, MonitoringContext>();
 
-            //services.AddHostedService<MonitorBackgroundService>();
+            services.AddHostedService<WmiProcessListenerBackgroundService>();
+            services.AddHostedService<EtwProcessListenerBackgroundService>();
             services.AddHostedService<CpuUsageBackgroundService>();
-            services.AddHostedService<RamInfoBackgroundService>();
+            services.AddHostedService<RamUsageBackgroundService>();
             services.AddHostedService<SynchronizationBackgroundService>();
         });
     }

@@ -1,9 +1,8 @@
 ﻿using EndpointProtector.Business.Models;
-using EndpointProtector.Models;
 using System.Diagnostics;
 using System.Management;
 
-namespace EndpointProtector.BackgroundServices
+namespace EndpointProtector.Services
 {
     internal class WmiProcessListenerBackgroundService : BackgroundService
     {

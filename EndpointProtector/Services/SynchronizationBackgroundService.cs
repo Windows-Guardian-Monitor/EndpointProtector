@@ -3,12 +3,12 @@ using EndpointProtector.Business.Models;
 using System.Management;
 using Vanara.PInvoke;
 
-namespace EndpointProtector.BackgroundServices
+namespace EndpointProtector.Services
 {
     internal class SynchronizationBackgroundService : BackgroundService
     {
         private readonly IWindowsWorkstationRepository _windowsWorkstationRepository;
-        
+
         public SynchronizationBackgroundService(IWindowsWorkstationRepository windowsWorkstationRepository)
         {
             _windowsWorkstationRepository = windowsWorkstationRepository;
@@ -24,7 +24,7 @@ namespace EndpointProtector.BackgroundServices
             var description = (string)result["Description"];
             var manufacturer = (string)result["Manufacturer"];
             var speed = (uint)result["Speed"];
-            
+
             return new RamNominalInfo((long)buff.ullTotalPhys, description, manufacturer, speed);
         }
 

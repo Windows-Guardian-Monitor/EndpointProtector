@@ -4,11 +4,10 @@ using Common.Contracts.Providers;
 using EndpointProtector.Business.Models;
 using Vanara.PInvoke;
 
-namespace EndpointProtector.BackgroundServices
+namespace EndpointProtector.Services
 {
-    internal class RamInfoBackgroundService(
-        IRamUsageInfoRepository ramRepository, 
-        ILogger<RamInfoBackgroundService> logger, 
+    internal class RamUsageBackgroundService(
+        IRamUsageInfoRepository ramRepository,
         IPeriodicTimerProvider periodicTimerProvider) : BackgroundService
     {
         private readonly CancellationTokenSource _tokenSource = new();
@@ -26,9 +25,7 @@ namespace EndpointProtector.BackgroundServices
 
             do
             {
-                var ramInfo = GetRamInfo();
-                await Console.Out.WriteLineAsync("ram");
-                ramRepository.Insert(ramInfo);
+                ramRepository.Insert(GetRamInfo());
             } while (await periodicTimer.WaitForNextTickAsync(stoppingToken) && _tokenSource.IsCancellationRequested is false);
         }
 
