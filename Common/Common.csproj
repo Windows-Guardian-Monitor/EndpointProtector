@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<TargetFramework>net6.0-windows10.0.22621.0</TargetFramework>
+		<LangVersion>12</LangVersion>
+		<SupportedOSPlatformVersion>8.0</SupportedOSPlatformVersion>
+	</PropertyGroup>
+
+</Project>

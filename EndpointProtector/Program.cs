@@ -1,9 +1,10 @@
-using EndpointProtector.BackgroundServices;
-using EndpointProtector.Contracts;
-using EndpointProtector.Contracts.DAL;
-using EndpointProtector.Contracts.Models;
-using EndpointProtector.DAL;
+using Common.Contracts.DAL;
+using Common.Contracts.Providers;
+using Database;
+using Database.DAL;
 using EndpointProtector.Database;
+using EndpointProtector.Rules;
+using EndpointProtector.Services;
 using Microsoft.Extensions.Logging.EventLog;
 
 internal class Program
@@ -15,21 +16,19 @@ internal class Program
     {
         builder.ConfigureServices(services =>
         {
-            //services.AddSingleton<JokeService>();
+            services.AddTransient<IRamUsageInfoRepository, RamUsageRepository>();
+            services.AddTransient<ICpuUsageRepository, CpuUsageInfoRepository>();
+            services.AddTransient<IWindowsWorkstationRepository, WindowsWorkstationRepository>();
 
-
-            //services.AddHostedService<WmiProcessListenerBackgroundService>();
-            //services.AddHostedService<EtwProcessListenerBackgroundService>();
-
-            //services.AddHostedService<SampleWindowsBackgroundService>();
-
-            services.AddTransient<IRepository<ICpuInfo>, CpuInfoRepository>();
-            services.AddTransient<IRepository<IOsInfo>, OsInfoRepository>();
-            services.AddTransient<IRepository<IRamInfo>, RamInfoRepository>();
-            services.AddTransient<IDiskInfoRepository, DiskInfoRepository>();
+            services.AddTransient<IPeriodicTimerProvider, PeriodicTimerProvider>();
 
             services.AddSingleton<IDatabaseContext, MonitoringContext>();
-            services.AddHostedService<MonitorBackgroundService>();
+
+            services.AddHostedService<WmiProcessListenerBackgroundService>();
+            services.AddHostedService<EtwProcessListenerBackgroundService>();
+            services.AddHostedService<CpuUsageBackgroundService>();
+            services.AddHostedService<RamUsageBackgroundService>();
+            services.AddHostedService<SynchronizationBackgroundService>();
         });
     }
 

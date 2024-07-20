@@ -1,4 +1,4 @@
-﻿using EndpointProtector.Contracts.Models;
+﻿using Common.Contracts.Models;
 
 namespace EndpointProtector.Business.Models
 {
