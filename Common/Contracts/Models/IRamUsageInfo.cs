@@ -2,7 +2,7 @@
 
 namespace Common.Contracts.Models;
 
-public interface IRamInfo
+public interface IRamUsageInfo
 {
     public int Id { get; set; }
     public uint PercentOfMemoryUsage { get; set; }

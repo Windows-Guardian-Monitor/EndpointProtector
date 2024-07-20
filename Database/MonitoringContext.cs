@@ -6,12 +6,18 @@ namespace Database
     {
         private LiteDatabase _database;
 
-        private const string FileName = "ep.db";
+        private const string FileName = "endpoint_protector.db";
         private const string FolderName = "tcc";
 
         public MonitoringContext()
         {
-            _database = new LiteDatabase(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), FolderName, FileName));
+            var connectionString = new ConnectionString()
+            {
+                Connection = ConnectionType.Shared,
+                Filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), FolderName, FileName)
+            };
+
+            _database = new LiteDatabase(connectionString);
         }
 
         public void Dispose()

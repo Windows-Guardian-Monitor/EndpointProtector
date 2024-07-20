@@ -7,13 +7,13 @@ using Vanara.PInvoke;
 namespace EndpointProtector.BackgroundServices
 {
     internal class RamInfoBackgroundService(
-        IRepository<IRamNominalInfo> ramRepository, 
+        IRamUsageInfoRepository ramRepository, 
         ILogger<RamInfoBackgroundService> logger, 
         IPeriodicTimerProvider periodicTimerProvider) : BackgroundService
     {
         private readonly CancellationTokenSource _tokenSource = new();
 
-        public IRamInfo GetRamInfo()
+        public IRamUsageInfo GetRamInfo()
         {
             var buff = Kernel32.MEMORYSTATUSEX.Default;
             Kernel32.GlobalMemoryStatusEx(ref buff);
@@ -27,9 +27,8 @@ namespace EndpointProtector.BackgroundServices
             do
             {
                 var ramInfo = GetRamInfo();
-                
-                //TODO CONTINUAR AQUI
-                //ramRepository.Insert(ramInfo);
+                await Console.Out.WriteLineAsync("ram");
+                ramRepository.Insert(ramInfo);
             } while (await periodicTimer.WaitForNextTickAsync(stoppingToken) && _tokenSource.IsCancellationRequested is false);
         }
 

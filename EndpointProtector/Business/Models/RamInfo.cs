@@ -4,7 +4,7 @@ using EndpointProtector.Models.Ram;
 
 namespace EndpointProtector.Business.Models;
 
-internal record RamInfo : IRamInfo
+internal record RamInfo : IRamUsageInfo
 {
     public uint PercentOfMemoryUsage { get; set; }
     public Storage AvailableMemory { get; set; }

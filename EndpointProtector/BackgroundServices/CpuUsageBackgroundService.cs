@@ -8,7 +8,7 @@ namespace EndpointProtector.BackgroundServices
     internal class CpuUsageBackgroundService(
         ICpuUsageRepository cpuUsageRepository, 
         ILogger<CpuUsageBackgroundService> logger, 
-        IPeriodicTimerProvider _periodicTimerProvider) : BackgroundService
+        IPeriodicTimerProvider periodicTimerProvider) : BackgroundService
     {
         private readonly CancellationTokenSource _tokenSource = new();
 
@@ -16,7 +16,7 @@ namespace EndpointProtector.BackgroundServices
         {
             var cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
 
-            var periodicTimer = _periodicTimerProvider.GetServicesPeriodicTimer();
+            var periodicTimer = periodicTimerProvider.GetServicesPeriodicTimer();
 
             do
             {
@@ -25,9 +25,9 @@ namespace EndpointProtector.BackgroundServices
                     CpuUsage = cpuCounter.NextValue()
                 };
 
-                logger.LogWarning(dbCpuUsage.CpuUsage.ToString());
-
                 cpuUsageRepository.Insert(dbCpuUsage);
+
+                await Console.Out.WriteLineAsync("cpu");
 
             } while (await periodicTimer.WaitForNextTickAsync() && _tokenSource.IsCancellationRequested is false);
         }

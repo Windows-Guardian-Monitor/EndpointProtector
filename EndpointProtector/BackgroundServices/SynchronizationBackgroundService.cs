@@ -1,5 +1,4 @@
 ﻿using Common.Contracts.DAL;
-using Common.Contracts.Models;
 using EndpointProtector.Business.Models;
 using System.Management;
 using Vanara.PInvoke;
@@ -17,7 +16,6 @@ namespace EndpointProtector.BackgroundServices
 
         public RamNominalInfo GetRamInfo()
         {
-            System.Diagnostics.Debugger.Launch();
             var buff = Kernel32.MEMORYSTATUSEX.Default;
             Kernel32.GlobalMemoryStatusEx(ref buff);
 

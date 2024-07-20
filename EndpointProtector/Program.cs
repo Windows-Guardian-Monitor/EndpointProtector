@@ -25,10 +25,7 @@ internal class Program
 
             //services.AddHostedService<SampleWindowsBackgroundService>();
 
-            services.AddTransient<IRepository<ICpuInfo>, CpuInfoRepository>();
-            services.AddTransient<IRepository<IOsInfo>, OsInfoRepository>();
-            services.AddTransient<IRepository<IRamNominalInfo>, RamInfoRepository>();
-            services.AddTransient<IDiskInfoRepository, DiskInfoRepository>();
+            services.AddTransient<IRamUsageInfoRepository, RamUsageRepository>();
             services.AddTransient<ICpuUsageRepository, CpuUsageInfoRepository>();
             services.AddTransient<IWindowsWorkstationRepository, WindowsWorkstationRepository>();
 
@@ -64,8 +61,6 @@ internal class Program
 
     private static void Main(string[] args)
     {
-        System.Diagnostics.Debugger.Launch();
-
         var builder = Host.CreateDefaultBuilder(args);
 
         DatabaseConfiguringService.CreateFolder();
