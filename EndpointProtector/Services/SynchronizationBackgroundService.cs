@@ -28,7 +28,7 @@ namespace EndpointProtector.Services
             return new RamNominalInfo((long)buff.ullTotalPhys, description, manufacturer, speed);
         }
 
-        private DiskInfo[] GetDiskInfo()
+        private static DiskInfo[] GetDiskInfo()
         {
             var drives = DriveInfo.GetDrives();
             var disks = new DiskInfo[drives.Length];
@@ -42,7 +42,7 @@ namespace EndpointProtector.Services
             return disks;
         }
 
-        private CpuInfo GetCpuNominalInformation()
+        private static CpuInfo GetCpuNominalInformation()
         {
             var cpu = new ManagementObjectSearcher("select * from Win32_Processor").Get().Cast<ManagementObject>().First();
 
@@ -54,7 +54,7 @@ namespace EndpointProtector.Services
             return new CpuInfo(name, caption, architecture, manufacturer);
         }
 
-        private OsInfo GetOsInformation()
+        private static OsInfo GetOsInformation()
         {
             var wmi = new ManagementObjectSearcher("select * from Win32_OperatingSystem").Get().Cast<ManagementObject>().First();
 
@@ -68,22 +68,39 @@ namespace EndpointProtector.Services
             return new OsInfo(description, version, architecture, serialNumber, manufacturer, systemDrive);
         }
 
+        private static string GetMachineUuid()
+        {
+            var wmi = new ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystemProduct").Get().Cast<ManagementObject>().First();
+
+            var uuid = wmi["UUID - 03000200-0400-0500-0006-000700080009"] as string;
+
+            if (uuid is not null)
+            {
+                return uuid;
+            }
+
+            throw new InvalidOperationException("Could not obtain uuid");
+        }
+
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var osInformation = GetOsInformation();
             var cpuInfomation = GetCpuNominalInformation();
             var disks = GetDiskInfo();
             var ramInfo = GetRamInfo();
+            var uuid = GetMachineUuid();
 
             var workstation = new WindowsWorkstation
             {
                 CpuInfo = cpuInfomation,
                 DisksInfo = disks,
                 OsInfo = osInformation,
-                RamInfo = ramInfo
+                RamInfo = ramInfo,
+                Uuid = uuid,
             };
 
             _windowsWorkstationRepository.Upsert(workstation);
+
             return Task.CompletedTask;
         }
     }

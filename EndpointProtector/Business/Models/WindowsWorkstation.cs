@@ -9,5 +9,6 @@ namespace EndpointProtector.Business.Models
         public IEnumerable<IDiskInfo> DisksInfo { get; set; }
         public IOsInfo OsInfo { get; set; }
         public IRamNominalInfo RamInfo { get; set; }
+        public string Uuid { get; set; }
     }
 }
