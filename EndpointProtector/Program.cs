@@ -1,5 +1,4 @@
 using Common.Contracts.DAL;
-using Common.Contracts.Models;
 using Common.Contracts.Providers;
 using Database;
 using Database.DAL;
