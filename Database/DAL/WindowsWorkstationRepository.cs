@@ -38,14 +38,13 @@ namespace Database.DAL
                 Name = item.CpuInfo.Name
             };
 
-            var dbDiskInfo = new DbOsInfo
+            var dbOsVersion = new DbOsInfo
             {
                 Architecture = item.OsInfo.Architecture,
                 Description = item.OsInfo.Description,
                 Manufacturer = item.OsInfo.Manufacturer,
-                OSVersion = item.OsInfo.OSVersion,
+                OsVersion = item.OsInfo.OsVersion,
                 SerialNumber = item.OsInfo.SerialNumber,
-                VersionStr = item.OsInfo.VersionStr,
                 WindowsDirectory = item.OsInfo.WindowsDirectory
             };
 
@@ -77,7 +76,7 @@ namespace Database.DAL
             {
                 CpuInfo = dbCpuInfo,
                 DisksInfo = dbDisks,
-                OsInfo = dbDiskInfo,
+                OsInfo = dbOsVersion,
                 RamInfo = dbRamInfo,
                 Uuid = item.Uuid
             };
