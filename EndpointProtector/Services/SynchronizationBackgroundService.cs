@@ -1,5 +1,6 @@
 ﻿using Common.Contracts.DAL;
-using EndpointProtector.Backend;
+using EndpointProtector.Backend.Requests;
+using EndpointProtector.Backend.Responses;
 using EndpointProtector.Extensions;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -20,7 +21,7 @@ namespace EndpointProtector.Services
         {
             try
             {
-                var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(30));
+                var periodicTimer = new PeriodicTimer(TimeSpan.FromHours(1));
                 do
                 {
                     var workstation = _windowsWorkstationRepository.GetFirst();
@@ -79,9 +80,13 @@ namespace EndpointProtector.Services
 
                     var httpClient = new HttpClient();
 
-                    var response = await httpClient.PostAsJsonAsync(_url, JsonSerializer.SerializeToUtf8Bytes(backendWindowsWorkstation));
+                    var response = await httpClient.PostAsJsonAsync(_url, JsonSerializer.SerializeToUtf8Bytes(backendWindowsWorkstation), stoppingToken);
 
-                    //validation logic
+                    if (response is { IsSuccessStatusCode: false })
+                    {
+                        var standardResponse = JsonSerializer.Deserialize<StandardResponse>(await response.Content.ReadAsStreamAsync(stoppingToken));
+                        throw new Exception(standardResponse?.Message);
+                    }
 
                 } while (await periodicTimer.WaitForNextTickAsync(stoppingToken));
             }
