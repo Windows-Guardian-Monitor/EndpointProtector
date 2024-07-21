@@ -78,7 +78,8 @@ namespace Database.DAL
                 CpuInfo = dbCpuInfo,
                 DisksInfo = dbDisks,
                 OsInfo = dbDiskInfo,
-                RamInfo = dbRamInfo
+                RamInfo = dbRamInfo,
+                Uuid = item.Uuid
             };
 
             if (dbWorkstation is null)
