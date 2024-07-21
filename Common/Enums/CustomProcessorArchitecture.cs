@@ -3,7 +3,7 @@
     /// <summary>
     /// https://learn.microsoft.com/en-us/uwp/api/windows.system.processorarchitecture?view=winrt-22621
     /// </summary>
-    internal enum Architecture
+    public enum CustomProcessorArchitecture
     {
         Arm = 5,
         //The ARM processor architecture

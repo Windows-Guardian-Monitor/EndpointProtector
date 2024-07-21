@@ -54,7 +54,7 @@ namespace EndpointProtector.Services
                     {
                         Architecture = workstation.OsInfo.Architecture.ToString(),
                         Description = workstation.OsInfo.Description,
-                        Manufacturer = workstation.OsInfo.Manufacturer,
+                        OsManufacturer = workstation.OsInfo.Manufacturer,
                         OsVersion = workstation.OsInfo.OsVersion.ToString(),
                         SerialNumber = workstation.OsInfo.SerialNumber,
                         VersionStr = workstation.OsInfo.OsVersion,

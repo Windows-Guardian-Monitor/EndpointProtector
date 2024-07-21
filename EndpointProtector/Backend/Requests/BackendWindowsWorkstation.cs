@@ -17,14 +17,14 @@
         {
             Architecture = architecture;
             Description = description;
-            this.manufacturer = manufacturer;
+            CpuManufacturer = manufacturer;
             Name = name;
         }
 
         public int Id { get; set; }
         public string Architecture { get; set; }
         public string Description { get; set; }
-        public string manufacturer { get; set; }
+        public string CpuManufacturer { get; set; }
         public string Name { get; set; }
     }
 
@@ -33,7 +33,7 @@
         public int Id { get; set; }
         public string Architecture { get; set; }
         public string Description { get; set; }
-        public string Manufacturer { get; set; }
+        public string OsManufacturer { get; set; }
         public string OsVersion { get; set; }
         public string SerialNumber { get; set; }
         public string VersionStr { get; set; }
