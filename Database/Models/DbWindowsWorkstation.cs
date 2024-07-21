@@ -9,5 +9,6 @@ namespace Database.Models
         public IOsInfo OsInfo { get; set; }
         public int Id { get; set; }
         public IRamNominalInfo RamInfo { get; set; }
+        public string Uuid { get; set; }
     }
 }
