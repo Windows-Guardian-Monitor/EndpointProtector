@@ -9,6 +9,7 @@
         public BackendOsinfo OsInfo { get; set; }
         public BackendRaminfo RamInfo { get; set; }
         public string Uuid { get; set; }
+        public string HostName { get; set; }
     }
 
     public class BackendCpuinfo

@@ -8,5 +8,6 @@
         IOsInfo OsInfo { get; set; }
         IRamNominalInfo RamInfo { get; set; }
         string Uuid { get; set; }
-    }
+		string HostName { get; set; }
+	}
 }

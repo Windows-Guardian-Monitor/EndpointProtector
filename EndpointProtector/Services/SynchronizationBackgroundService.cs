@@ -75,7 +75,8 @@ namespace EndpointProtector.Services
                         DisksInfo = backendDisks,
                         OsInfo = backendOsInfo,
                         RamInfo = backendRamInfo,
-                        Uuid = workstation.Uuid
+                        Uuid = workstation.Uuid,
+                        HostName = workstation.HostName
                     };
 
                     var httpClient = new HttpClient();

@@ -97,7 +97,8 @@ namespace EndpointProtector.Services
                 OsInfo = osInformation,
                 RamInfo = ramInfo,
                 Uuid = uuid,
-            };
+                HostName = Environment.MachineName
+			};
 
             _windowsWorkstationRepository.Upsert(workstation);
 

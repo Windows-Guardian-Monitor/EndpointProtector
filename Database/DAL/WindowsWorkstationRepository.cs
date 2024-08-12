@@ -19,7 +19,8 @@ namespace Database.DAL
                 CpuInfo = item.CpuInfo,
                 DisksInfo = item.DisksInfo,
                 OsInfo = item.OsInfo,
-                RamInfo = item.RamInfo
+                RamInfo = item.RamInfo,
+                HostName = item.HostName
             };
 
             databaseContext.GetSpecificCollection<DbWindowsWorkstation>().Insert(dbWindowsWorkstation);
@@ -78,8 +79,9 @@ namespace Database.DAL
                 DisksInfo = dbDisks,
                 OsInfo = dbOsVersion,
                 RamInfo = dbRamInfo,
-                Uuid = item.Uuid
-            };
+                Uuid = item.Uuid,
+				HostName = item.HostName
+			};
 
             if (dbWorkstation is null)
             {
