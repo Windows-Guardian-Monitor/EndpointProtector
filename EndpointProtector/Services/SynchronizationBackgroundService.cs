@@ -1,107 +1,101 @@
 ﻿using Common.Contracts.DAL;
-using EndpointProtector.Business.Models;
-using System.Management;
-using Vanara.PInvoke;
+using EndpointProtector.Backend.Requests;
+using EndpointProtector.Backend.Responses;
+using EndpointProtector.Extensions;
+using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace EndpointProtector.Services
 {
     internal class SynchronizationBackgroundService : BackgroundService
     {
         private readonly IWindowsWorkstationRepository _windowsWorkstationRepository;
+        private const string _url = "https://localhost:7102/Information/Workstation";
 
         public SynchronizationBackgroundService(IWindowsWorkstationRepository windowsWorkstationRepository)
         {
             _windowsWorkstationRepository = windowsWorkstationRepository;
         }
 
-        public RamNominalInfo GetRamInfo()
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var buff = Kernel32.MEMORYSTATUSEX.Default;
-            Kernel32.GlobalMemoryStatusEx(ref buff);
-
-            var result = new ManagementObjectSearcher("SELECT * FROM Win32_PhysicalMemory").Get().Cast<ManagementObject>().First();
-
-            var description = (string)result["Description"];
-            var manufacturer = (string)result["Manufacturer"];
-            var speed = (uint)result["Speed"];
-
-            return new RamNominalInfo((long)buff.ullTotalPhys, description, manufacturer, speed);
-        }
-
-        private static DiskInfo[] GetDiskInfo()
-        {
-            var drives = DriveInfo.GetDrives();
-            var disks = new DiskInfo[drives.Length];
-
-            var i = 0;
-            foreach (var item in drives)
+            try
             {
-                disks[i++] = new DiskInfo(item.AvailableFreeSpace, item.TotalSize, item.Name, item.DriveFormat);
+                var periodicTimer = new PeriodicTimer(TimeSpan.FromHours(1));
+                do
+                {
+                    var workstation = _windowsWorkstationRepository.GetFirst();
+
+                    if (workstation is null)
+                    {
+                        continue;
+                    }
+
+
+                    var backendCpuInfo =
+                        new BackendCpuinfo(workstation.CpuInfo.Architecture.ToString(), workstation.CpuInfo.Description, workstation.CpuInfo.Manufacturer, workstation.CpuInfo.Name);
+
+                    var backendDisks = new BackendDisksinfo[workstation.DisksInfo.Count()];
+
+                    var i = 0;
+
+                    foreach (var item in workstation.DisksInfo)
+                    {
+                        backendDisks[i++] = new BackendDisksinfo
+                        {
+                            AvailableSize = item.AvailableSize.ToString(),
+                            DiskName = item.DiskName,
+                            DiskType = item.DiskType,
+                            TotalSize = item.TotalSize.ToString()
+                        };
+                    }
+
+                    var backendOsInfo = new BackendOsinfo
+                    {
+                        Architecture = workstation.OsInfo.Architecture.ToString(),
+                        Description = workstation.OsInfo.Description,
+                        OsManufacturer = workstation.OsInfo.Manufacturer,
+                        OsVersion = workstation.OsInfo.OsVersion.ToString(),
+                        SerialNumber = workstation.OsInfo.SerialNumber,
+                        VersionStr = workstation.OsInfo.OsVersion,
+                        WindowsDirectory = workstation.OsInfo.WindowsDirectory
+                    };
+
+                    var backendRamInfo = new BackendRaminfo
+                    {
+                        Description = workstation.RamInfo.Description,
+                        Manufacturer = workstation.RamInfo.Manufacturer,
+                        Speed = workstation.RamInfo.Speed.ToHumanizedMemorySpeed(),
+                        TotalMemory = workstation.RamInfo.TotalMemory.ToString()
+                    };
+
+                    var backendWindowsWorkstation = new BackendWindowsWorkstation
+                    {
+                        CpuInfo = backendCpuInfo,
+                        DisksInfo = backendDisks,
+                        OsInfo = backendOsInfo,
+                        RamInfo = backendRamInfo,
+                        Uuid = workstation.Uuid,
+                        HostName = workstation.HostName
+                    };
+
+                    var httpClient = new HttpClient();
+
+                    var response = await httpClient.PostAsJsonAsync(_url, JsonSerializer.SerializeToUtf8Bytes(backendWindowsWorkstation), stoppingToken);
+
+                    if (response is { IsSuccessStatusCode: false })
+                    {
+                        var standardResponse = JsonSerializer.Deserialize<StandardResponse>(await response.Content.ReadAsStreamAsync(stoppingToken));
+                        throw new Exception(standardResponse?.Message);
+                    }
+
+                } while (await periodicTimer.WaitForNextTickAsync(stoppingToken));
             }
-
-            return disks;
-        }
-
-        private static CpuInfo GetCpuNominalInformation()
-        {
-            var cpu = new ManagementObjectSearcher("select * from Win32_Processor").Get().Cast<ManagementObject>().First();
-
-            var architecture = (ushort)cpu["Architecture"];
-            var name = (string)cpu["Name"];
-            var manufacturer = (string)cpu["Manufacturer"];
-            var caption = (string)cpu["Caption"];
-
-            return new CpuInfo(name, caption, architecture, manufacturer);
-        }
-
-        private static OsInfo GetOsInformation()
-        {
-            var wmi = new ManagementObjectSearcher("select * from Win32_OperatingSystem").Get().Cast<ManagementObject>().First();
-
-            var description = ((string)wmi["Caption"]).Trim();
-            var version = (string)wmi["Version"];
-            var architecture = (string)wmi["OSArchitecture"];
-            var serialNumber = (string)wmi["SerialNumber"];
-            var manufacturer = (string)wmi["Manufacturer"];
-            var systemDrive = (string)wmi["SystemDrive"];
-
-            return new OsInfo(description, version, architecture, serialNumber, manufacturer, systemDrive);
-        }
-
-        private static string GetMachineUuid()
-        {
-            var wmi = new ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystemProduct").Get().Cast<ManagementObject>().First();
-
-            var uuid = wmi["UUID - 03000200-0400-0500-0006-000700080009"] as string;
-
-            if (uuid is not null)
+            catch (Exception e)
             {
-                return uuid;
+                Console.WriteLine(e);
+                throw;
             }
-
-            throw new InvalidOperationException("Could not obtain uuid");
-        }
-
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            var osInformation = GetOsInformation();
-            var cpuInfomation = GetCpuNominalInformation();
-            var disks = GetDiskInfo();
-            var ramInfo = GetRamInfo();
-            var uuid = GetMachineUuid();
-
-            var workstation = new WindowsWorkstation
-            {
-                CpuInfo = cpuInfomation,
-                DisksInfo = disks,
-                OsInfo = osInformation,
-                RamInfo = ramInfo,
-                Uuid = uuid,
-            };
-
-            _windowsWorkstationRepository.Upsert(workstation);
-
-            return Task.CompletedTask;
         }
     }
 }

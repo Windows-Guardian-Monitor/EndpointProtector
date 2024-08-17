@@ -1,4 +1,5 @@
 ﻿using Common.Contracts.Models;
+using Common.Enums;
 using System.Runtime.InteropServices;
 
 namespace EndpointProtector.Business.Models
@@ -7,7 +8,7 @@ namespace EndpointProtector.Business.Models
     {
         public string? Name { get; set; }
         public string? Description { get; set; }
-        public Architecture Architecture { get; set; }
+        public CustomProcessorArchitecture Architecture { get; set; }
         public string Manufacturer { get; set; }
         public int Id { get; set; }
 
@@ -20,7 +21,7 @@ namespace EndpointProtector.Business.Models
 
             Name = FormatName(name);
             Description = description;
-            Architecture = (Architecture)architecture;
+            Architecture = (CustomProcessorArchitecture)architecture;
             Manufacturer = manufacturer;
         }
 

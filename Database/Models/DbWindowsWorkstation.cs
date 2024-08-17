@@ -2,12 +2,14 @@
 
 namespace Database.Models
 {
-    public class DbWindowsWorkstation : IWindowsWorkstation
+	public class DbWindowsWorkstation : IWindowsWorkstation
     {
         public ICpuInfo CpuInfo { get; set; }
         public IEnumerable<IDiskInfo> DisksInfo { get; set; }
         public IOsInfo OsInfo { get; set; }
         public int Id { get; set; }
         public IRamNominalInfo RamInfo { get; set; }
-    }
+        public string Uuid { get; set; }
+		public string HostName { get; set; }
+	}
 }

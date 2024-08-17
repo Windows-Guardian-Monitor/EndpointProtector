@@ -19,7 +19,8 @@ namespace Database.DAL
                 CpuInfo = item.CpuInfo,
                 DisksInfo = item.DisksInfo,
                 OsInfo = item.OsInfo,
-                RamInfo = item.RamInfo
+                RamInfo = item.RamInfo,
+                HostName = item.HostName
             };
 
             databaseContext.GetSpecificCollection<DbWindowsWorkstation>().Insert(dbWindowsWorkstation);
@@ -38,14 +39,13 @@ namespace Database.DAL
                 Name = item.CpuInfo.Name
             };
 
-            var dbDiskInfo = new DbOsInfo
+            var dbOsVersion = new DbOsInfo
             {
                 Architecture = item.OsInfo.Architecture,
                 Description = item.OsInfo.Description,
                 Manufacturer = item.OsInfo.Manufacturer,
-                OSVersion = item.OsInfo.OSVersion,
+                OsVersion = item.OsInfo.OsVersion,
                 SerialNumber = item.OsInfo.SerialNumber,
-                VersionStr = item.OsInfo.VersionStr,
                 WindowsDirectory = item.OsInfo.WindowsDirectory
             };
 
@@ -77,9 +77,11 @@ namespace Database.DAL
             {
                 CpuInfo = dbCpuInfo,
                 DisksInfo = dbDisks,
-                OsInfo = dbDiskInfo,
-                RamInfo = dbRamInfo
-            };
+                OsInfo = dbOsVersion,
+                RamInfo = dbRamInfo,
+                Uuid = item.Uuid,
+				HostName = item.HostName
+			};
 
             if (dbWorkstation is null)
             {

@@ -28,6 +28,7 @@ internal class Program
             services.AddHostedService<EtwProcessListenerBackgroundService>();
             services.AddHostedService<CpuUsageBackgroundService>();
             services.AddHostedService<RamUsageBackgroundService>();
+            services.AddHostedService<InformationRetrieverBackgroundService>();
             services.AddHostedService<SynchronizationBackgroundService>();
         });
     }
