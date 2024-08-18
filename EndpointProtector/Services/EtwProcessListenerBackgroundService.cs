@@ -1,28 +1,36 @@
 ﻿using EndpointProtector.Operators;
 using Microsoft.Diagnostics.Tracing.Parsers;
 using Microsoft.Diagnostics.Tracing.Session;
+using System.Diagnostics;
 
 namespace EndpointProtector.Services
 {
-    internal class EtwProcessListenerBackgroundService : BackgroundService
-    {
-        private readonly ILogger<EtwProcessListenerBackgroundService> _logger;
+	internal class EtwProcessListenerBackgroundService : BackgroundService
+    {        
         private readonly TraceEventSession _traceEventSession;
         private readonly IProgramOperator _programOperator;
 
-		public EtwProcessListenerBackgroundService(ILogger<EtwProcessListenerBackgroundService> logger, IProgramOperator programOperator)
+		public EtwProcessListenerBackgroundService(IProgramOperator programOperator)
 		{
-			_logger = logger;
 			_traceEventSession = new TraceEventSession(KernelTraceEventParser.KernelSessionName);
 			_programOperator = programOperator;
 		}
 
-		private async void Kernel_ProcessStart(Microsoft.Diagnostics.Tracing.Parsers.Kernel.ProcessTraceData data)
+		private void Kernel_ProcessStart(Microsoft.Diagnostics.Tracing.Parsers.Kernel.ProcessTraceData data)
         {
             string message = $"[ETW] {data.ProcessName} started";
+            
             Console.WriteLine(message);
-            _programOperator.HandleProgramManagement(data);
-            _logger.LogInformation(message);
+
+            try
+            {
+                var process = Process.GetProcessById(data.ProcessID);
+				_programOperator.HandleProgramManagement(process);
+			}
+            catch (Exception e)
+            {
+                //ignored
+            }
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)

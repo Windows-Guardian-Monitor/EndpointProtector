@@ -1,20 +1,23 @@
 ﻿using EndpointProtector.Business.Models;
+using EndpointProtector.Operators;
 using System.Diagnostics;
 using System.Management;
 
 namespace EndpointProtector.Services
 {
-    internal class WmiProcessListenerBackgroundService : BackgroundService
+	internal class WmiProcessListenerBackgroundService : BackgroundService
     {
         private ManagementEventWatcher? _managementEventWatcher;
         private readonly ILogger<WmiProcessListenerBackgroundService> _logger;
+        private readonly IProgramOperator _programOperator;
 
-        public WmiProcessListenerBackgroundService(ILogger<WmiProcessListenerBackgroundService> logger)
-        {
-            _logger = logger;
-        }
+		public WmiProcessListenerBackgroundService(ILogger<WmiProcessListenerBackgroundService> logger, IProgramOperator programOperator)
+		{
+			_logger = logger;
+			_programOperator = programOperator;
+		}
 
-        void ProcessArrived(object sender, EventArrivedEventArgs e)
+		void ProcessArrived(object sender, EventArrivedEventArgs e)
         {
             var wmiProcess = new WmiProcess
             {
@@ -26,16 +29,19 @@ namespace EndpointProtector.Services
                 Sid = (byte[])e.NewEvent.Properties["Sid"].Value
             };
 
-            if (wmiProcess.ProcessName.Contains("notepad", StringComparison.OrdinalIgnoreCase))
+
+            try
             {
-                Process.GetProcessById((int)wmiProcess.ProcessId).Kill();
-                return;
+                var process = Process.GetProcessById((int)wmiProcess.ProcessId);
+				_programOperator.HandleProgramManagement(process, wmiProcess.ProcessName);
+			}
+            catch
+            {
+                //ignored
             }
 
             var message = $"[WMI] Process started: {wmiProcess.ProcessName}";
-
             Console.WriteLine(message);
-            _logger.LogInformation(message);
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)

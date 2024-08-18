@@ -1,46 +1,78 @@
-﻿using Microsoft.Diagnostics.Tracing.Parsers.Kernel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
+﻿using Database.Contracts;
+using EndpointProtector.Business.Models;
+using System.Diagnostics;
+using System.Security.Cryptography;
 
 namespace EndpointProtector.Operators
 {
 	public class ProgramOperator : IProgramOperator
 	{
+		private readonly IProgramRepository _programRepository;
 
-		public async ValueTask HandleProgramManagement(ProcessTraceData data)
+		public ProgramOperator(IProgramRepository programRepository)
 		{
-			if (data.SessionID is 0)
+			_programRepository = programRepository;
+		}
+
+		private string CalculateFileHash(string filePath)
+		{
+			byte[] hash;
+			using (var hash512 = SHA512.Create())
+			{
+				using (var stream = File.OpenRead(filePath))
+				{
+					hash = hash512.ComputeHash(stream);
+				}
+			}
+
+			return Convert.ToBase64String(hash);
+		}
+
+		public void HandleProgramManagement(Process process, string name = "")
+		{
+
+			if (process is null || process.SessionId is 0)
 			{
 				return;
 			}
 
-			List<string[]> allLineFields = new List<string[]>();
-			var textStream = new System.IO.StringReader(data.CommandLine);
-			using (var parser = new Microsoft.VisualBasic.FileIO.TextFieldParser(textStream))
+			string? fileName;
+
+
+			if (process.MainModule is null)
 			{
-				parser.Delimiters = new string[] { " " };
-				parser.HasFieldsEnclosedInQuotes = true; // <--- !!!
-				string[] fields;
-				while ((fields = parser.ReadFields()) != null)
-				{
-					allLineFields.Add(fields);
-				}
+				return;
 			}
 
+			fileName = process.MainModule.FileName;
 
-			//var toLowerImageFileName = data.ImageFileName.ToLower();
-			//var exeEndIndex = data.CommandLine.ToLower().IndexOf(toLowerImageFileName) + toLowerImageFileName.Length;
-			//var path = data.CommandLine.Substring(0, exeEndIndex).Replace("\\??\\", string.Empty);
+			if (string.IsNullOrWhiteSpace(fileName))
+			{
+				return;
+			}
 
-			//if (string.IsNullOrWhiteSpace(path) is false)
-			//{
+			var fileHash = CalculateFileHash(fileName);
 
-			//}
+			if (_programRepository.Exists(fileHash))
+			{
+				return;
+			}
 
+			var processName = name;
+
+			if (string.IsNullOrWhiteSpace(name))
+			{
+				if (string.IsNullOrEmpty(process.ProcessName))
+				{
+					return;
+				}
+
+				processName = process.ProcessName;
+			}
+
+			var program = new BusinessProgram(fileName, processName, fileHash);
+
+			_programRepository.Insert(program);
 		}
 	}
 }

@@ -1,10 +1,10 @@
-﻿using Common.Contracts.DAL;
+﻿using Database.Contracts;
 using Database.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Database.Repositories
 {
-	internal class ProgramRepository : IRepository<DbProgram>
+	public class ProgramRepository : IProgramRepository
 	{
 		private readonly IServiceScopeFactory _serviceScopeFactory;
 		private readonly DatabaseContext _databaseContext;
@@ -16,17 +16,12 @@ namespace Database.Repositories
 			_databaseContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
 		}
 
-		public void Delete(int id)
-		{
-			throw new NotImplementedException();
-		}
+		public void DeleteAll() => _databaseContext.Programs.RemoveRange(_databaseContext.Programs);
+
+		public bool Exists(string hash) => _databaseContext.Programs.Any(p => p.Hash.Equals(hash, StringComparison.OrdinalIgnoreCase));
+
 
 		public IEnumerable<DbProgram> GetAll() => _databaseContext.Programs.ToList();
-
-		public DbProgram? GetFirst()
-		{
-			throw new NotImplementedException();
-		}
 
 		public void Insert(DbProgram item)
 		{

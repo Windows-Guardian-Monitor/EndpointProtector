@@ -1,7 +1,7 @@
 using Common.Contracts.DAL;
 using Common.Contracts.Providers;
 using Database;
-using Database.DAL;
+using Database.Contracts;
 using Database.Repositories;
 using EndpointProtector.Database;
 using EndpointProtector.Operators;
@@ -21,11 +21,15 @@ internal class Program
         {
             
 			var conn = context.Configuration.GetConnectionString("ConnectionString");
-			services.AddMySql<DatabaseContext>(conn, ServerVersion.AutoDetect(conn));
+			services.AddMySql<DatabaseContext>(conn, ServerVersion.AutoDetect(conn), options =>
+            {
+                options.EnableStringComparisonTranslations();
+            });
 
 			//services.AddTransient<IRamUsageInfoRepository, RamUsageRepository>();
    //         services.AddTransient<ICpuUsageRepository, CpuUsageInfoRepository>();
             services.AddTransient<IWindowsWorkstationRepository, WsRepository>();
+            services.AddTransient<IProgramRepository, ProgramRepository>();
 
             services.AddTransient<IPeriodicTimerProvider, PeriodicTimerProvider>();
             services.AddTransient<IProgramOperator, ProgramOperator>();
@@ -38,6 +42,7 @@ internal class Program
             services.AddHostedService<RamUsageBackgroundService>();
             services.AddHostedService<InformationRetrieverBackgroundService>();
             services.AddHostedService<SynchronizationBackgroundService>();
+            services.AddHostedService<CurrentProcessScannerBackgroundService>();
         });
     }
 
