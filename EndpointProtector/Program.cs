@@ -4,6 +4,7 @@ using Database;
 using Database.DAL;
 using Database.Repositories;
 using EndpointProtector.Database;
+using EndpointProtector.Operators;
 using EndpointProtector.Providers;
 using EndpointProtector.Services;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,7 @@ internal class Program
             services.AddTransient<IWindowsWorkstationRepository, WsRepository>();
 
             services.AddTransient<IPeriodicTimerProvider, PeriodicTimerProvider>();
+            services.AddTransient<IProgramOperator, ProgramOperator>();
 
             services.AddSingleton<IDatabaseContext, MonitoringContext>();
 

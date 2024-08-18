@@ -1,4 +1,5 @@
-﻿using Microsoft.Diagnostics.Tracing.Parsers;
+﻿using EndpointProtector.Operators;
+using Microsoft.Diagnostics.Tracing.Parsers;
 using Microsoft.Diagnostics.Tracing.Session;
 
 namespace EndpointProtector.Services
@@ -7,17 +8,20 @@ namespace EndpointProtector.Services
     {
         private readonly ILogger<EtwProcessListenerBackgroundService> _logger;
         private readonly TraceEventSession _traceEventSession;
+        private readonly IProgramOperator _programOperator;
 
-        public EtwProcessListenerBackgroundService(ILogger<EtwProcessListenerBackgroundService> logger)
-        {
-            _logger = logger;
-            _traceEventSession = new TraceEventSession(KernelTraceEventParser.KernelSessionName);
-        }
+		public EtwProcessListenerBackgroundService(ILogger<EtwProcessListenerBackgroundService> logger, IProgramOperator programOperator)
+		{
+			_logger = logger;
+			_traceEventSession = new TraceEventSession(KernelTraceEventParser.KernelSessionName);
+			_programOperator = programOperator;
+		}
 
-        private void Kernel_ProcessStart(Microsoft.Diagnostics.Tracing.Parsers.Kernel.ProcessTraceData data)
+		private async void Kernel_ProcessStart(Microsoft.Diagnostics.Tracing.Parsers.Kernel.ProcessTraceData data)
         {
             string message = $"[ETW] {data.ProcessName} started";
             Console.WriteLine(message);
+            _programOperator.HandleProgramManagement(data);
             _logger.LogInformation(message);
         }
 

@@ -1,12 +1,11 @@
 ﻿using Common.Contracts.DAL;
-using EndpointProtector.Business.Models;
 using EndpointProtector.Business.Models.Ws;
 using System.Management;
 using Vanara.PInvoke;
 
 namespace EndpointProtector.Services
 {
-    internal class InformationRetrieverBackgroundService : BackgroundService
+	internal class InformationRetrieverBackgroundService : BackgroundService
     {
         private readonly IWindowsWorkstationRepository _windowsWorkstationRepository;
 

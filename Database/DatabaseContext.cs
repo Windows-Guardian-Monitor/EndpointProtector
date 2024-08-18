@@ -1,5 +1,4 @@
 ﻿using Database.Models;
-using EndpointProtector.Models.Ram;
 using Microsoft.EntityFrameworkCore;
 
 namespace Database
@@ -19,7 +18,8 @@ namespace Database
 		public DbSet<DbWindowsWorkstation> Workstations { get; set; }
 		public DbSet<DbCpuInfo> Cpus { get; set; }
 		public DbSet<DbRamInfo> Rams { get; set; }
-		public DbSet<DbOsInfo> OperationalSystems{ get; set; }
-		public DbSet<DbDiskInfo> Disks{ get; set; }
-    }
+		public DbSet<DbOsInfo> OperationalSystems { get; set; }
+		public DbSet<DbDiskInfo> Disks { get; set; }
+		public DbSet<DbProgram> Programs { get; set; }
+	}
 }
