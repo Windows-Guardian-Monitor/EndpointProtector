@@ -1,4 +1,4 @@
-﻿namespace Common.Contracts.Models;
+﻿namespace Common.Contracts.Models.Ws;
 
 public interface IOsInfo
 {
@@ -8,4 +8,5 @@ public interface IOsInfo
     string SerialNumber { get; set; }
     string OsVersion { get; set; }
     string WindowsDirectory { get; set; }
+	int Id { get; set; }
 }

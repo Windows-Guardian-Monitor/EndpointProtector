@@ -1,10 +1,9 @@
-﻿using Common.Contracts.DAL;
-using Common.Contracts.Models;
+﻿using Common.Contracts.Models.Ws;
 using Database.Models;
 
 namespace Database.DAL
 {
-    public class CpuUsageInfoRepository(IDatabaseContext databaseContext) : ICpuUsageRepository
+	public class CpuUsageInfoRepository(IDatabaseContext databaseContext)
     {
         public void Delete(int id) => databaseContext.GetSpecificCollection<DbCpuUsageInfo>().Delete(id);
 

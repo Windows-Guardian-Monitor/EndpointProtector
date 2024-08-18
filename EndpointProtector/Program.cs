@@ -2,9 +2,11 @@ using Common.Contracts.DAL;
 using Common.Contracts.Providers;
 using Database;
 using Database.DAL;
+using Database.Repositories;
 using EndpointProtector.Database;
-using EndpointProtector.Rules;
+using EndpointProtector.Providers;
 using EndpointProtector.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.EventLog;
 
 internal class Program
@@ -14,11 +16,15 @@ internal class Program
 
     private static void ConfigureServices(IHostBuilder builder)
     {
-        builder.ConfigureServices(services =>
+        builder.ConfigureServices((context, services) =>
         {
-            services.AddTransient<IRamUsageInfoRepository, RamUsageRepository>();
-            services.AddTransient<ICpuUsageRepository, CpuUsageInfoRepository>();
-            services.AddTransient<IWindowsWorkstationRepository, WindowsWorkstationRepository>();
+            
+			var conn = context.Configuration.GetConnectionString("ConnectionString");
+			services.AddMySql<DatabaseContext>(conn, ServerVersion.AutoDetect(conn));
+
+			//services.AddTransient<IRamUsageInfoRepository, RamUsageRepository>();
+   //         services.AddTransient<ICpuUsageRepository, CpuUsageInfoRepository>();
+            services.AddTransient<IWindowsWorkstationRepository, WsRepository>();
 
             services.AddTransient<IPeriodicTimerProvider, PeriodicTimerProvider>();
 
@@ -65,6 +71,10 @@ internal class Program
         ConfigureLogging(builder);
 
         var host = builder.Build();
+
+        var scope = host.Services.CreateScope();
+
+        (scope.ServiceProvider.GetRequiredService<DatabaseContext>()).Database.EnsureCreated();
 
         host.Run();
     }

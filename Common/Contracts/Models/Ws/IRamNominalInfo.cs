@@ -1,10 +1,10 @@
 ﻿using EndpointProtector.Models.Ram;
 
-namespace Common.Contracts.Models
+namespace Common.Contracts.Models.Ws
 {
     public interface IRamNominalInfo
     {
-        Storage TotalMemory { get; set; }
+        string TotalMemory { get; set; }
         string Description { get; set; }
         string Manufacturer { get; set; }
         uint Speed { get; set; }

@@ -1,6 +1,6 @@
-﻿using Common.Contracts.Models;
+﻿using Common.Contracts.Models.Ws;
 
-namespace EndpointProtector.Business.Models
+namespace EndpointProtector.Business.Models.Ws
 {
     internal class CpuUsageInfo : ICpuUsageInfo
     {

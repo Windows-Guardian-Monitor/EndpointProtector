@@ -1,4 +1,4 @@
-﻿namespace Common.Contracts.Models
+﻿namespace Common.Contracts.Models.Ws
 {
     public interface IWindowsWorkstation
     {
@@ -8,6 +8,6 @@
         IOsInfo OsInfo { get; set; }
         IRamNominalInfo RamInfo { get; set; }
         string Uuid { get; set; }
-		string HostName { get; set; }
-	}
+        string HostName { get; set; }
+    }
 }

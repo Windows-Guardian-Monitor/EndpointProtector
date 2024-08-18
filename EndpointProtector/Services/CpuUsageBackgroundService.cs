@@ -1,12 +1,11 @@
-﻿using Common.Contracts.DAL;
-using Common.Contracts.Providers;
-using EndpointProtector.Business.Models;
+﻿using Common.Contracts.Providers;
+using EndpointProtector.Business.Models.Ws;
 using System.Diagnostics;
 
 namespace EndpointProtector.Services
 {
-    internal class CpuUsageBackgroundService(
-        ICpuUsageRepository cpuUsageRepository,
+	internal class CpuUsageBackgroundService(
+        //ICpuUsageRepository cpuUsageRepository,
         IPeriodicTimerProvider periodicTimerProvider) : BackgroundService
     {
         private readonly CancellationTokenSource _tokenSource = new();
@@ -24,7 +23,7 @@ namespace EndpointProtector.Services
                     CpuUsage = cpuCounter.NextValue()
                 };
 
-                cpuUsageRepository.Insert(dbCpuUsage);
+                //cpuUsageRepository.Insert(dbCpuUsage);
 
             } while (await periodicTimer.WaitForNextTickAsync() && _tokenSource.IsCancellationRequested is false);
         }

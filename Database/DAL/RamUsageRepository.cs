@@ -1,10 +1,9 @@
-﻿using Common.Contracts.DAL;
-using Common.Contracts.Models;
+﻿using Common.Contracts.Models.Ws;
 using Database.Models;
 
 namespace Database.DAL
 {
-    public class RamUsageRepository(IDatabaseContext databaseContext) : IRamUsageInfoRepository
+	public class RamUsageRepository(IDatabaseContext databaseContext)
     {
         public void Delete(int id) => databaseContext.GetSpecificCollection<DbRamUsage>().Delete(id);
 

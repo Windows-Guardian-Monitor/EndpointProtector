@@ -1,6 +1,6 @@
 ﻿using Windows.UI.Composition.Interactions;
 
-namespace Common.Contracts.Models
+namespace Common.Contracts.Models.Ws
 {
     public interface ICpuUsageInfo
     {

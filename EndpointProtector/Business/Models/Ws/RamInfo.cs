@@ -1,8 +1,8 @@
-﻿using Common.Contracts.Models;
+﻿using Common.Contracts.Models.Ws;
 using EndpointProtector.Extensions;
 using EndpointProtector.Models.Ram;
 
-namespace EndpointProtector.Business.Models;
+namespace EndpointProtector.Business.Models.Ws;
 
 internal record RamInfo : IRamUsageInfo
 {

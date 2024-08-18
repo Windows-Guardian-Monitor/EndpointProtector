@@ -1,5 +1,6 @@
 ﻿using Common.Contracts.DAL;
 using EndpointProtector.Business.Models;
+using EndpointProtector.Business.Models.Ws;
 using System.Management;
 using Vanara.PInvoke;
 

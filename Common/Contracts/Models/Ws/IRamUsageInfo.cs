@@ -1,6 +1,6 @@
 ﻿using EndpointProtector.Models.Ram;
 
-namespace Common.Contracts.Models;
+namespace Common.Contracts.Models.Ws;
 
 public interface IRamUsageInfo
 {

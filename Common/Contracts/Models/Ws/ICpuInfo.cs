@@ -1,6 +1,6 @@
 ﻿using Common.Enums;
 
-namespace Common.Contracts.Models
+namespace Common.Contracts.Models.Ws
 {
     public interface ICpuInfo
     {

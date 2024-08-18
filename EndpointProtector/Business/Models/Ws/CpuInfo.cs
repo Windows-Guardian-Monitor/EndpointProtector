@@ -1,8 +1,8 @@
-﻿using Common.Contracts.Models;
+﻿using Common.Contracts.Models.Ws;
 using Common.Enums;
 using System.Runtime.InteropServices;
 
-namespace EndpointProtector.Business.Models
+namespace EndpointProtector.Business.Models.Ws
 {
     internal record CpuInfo : ICpuInfo
     {

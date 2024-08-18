@@ -1,8 +1,8 @@
-﻿using Common.Contracts.Models;
+﻿using Common.Contracts.Models.Ws;
 
-namespace EndpointProtector.Business.Models
+namespace EndpointProtector.Business.Models.Ws
 {
-    internal record OsInfo : IOsInfo
+	internal record OsInfo : IOsInfo
     {
         public string Description { get; set; }
         public string OsVersion { get; set; }
@@ -10,9 +10,10 @@ namespace EndpointProtector.Business.Models
         public string SerialNumber { get; set; }
         public string Manufacturer { get; set; }
         public string WindowsDirectory { get; set; }
+		public int Id { get; set; }
 
-        public OsInfo(string description, string versionStr, string architecture, string serialNumber, string manufacturer, string windowsDirectory)
-        {            
+		public OsInfo(string description, string versionStr, string architecture, string serialNumber, string manufacturer, string windowsDirectory)
+        {
             Description = description;
             OsVersion = versionStr;
             Architecture = architecture;

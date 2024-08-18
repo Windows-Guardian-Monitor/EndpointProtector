@@ -1,13 +1,13 @@
 ﻿using Common.Contracts.DAL;
-using Common.Contracts.Models;
+using Common.Contracts.Models.Ws;
 using Common.Contracts.Providers;
-using EndpointProtector.Business.Models;
+using EndpointProtector.Business.Models.Ws;
 using Vanara.PInvoke;
 
 namespace EndpointProtector.Services
 {
-    internal class RamUsageBackgroundService(
-        IRamUsageInfoRepository ramRepository,
+	internal class RamUsageBackgroundService(
+        //IRamUsageInfoRepository ramRepository,
         IPeriodicTimerProvider periodicTimerProvider) : BackgroundService
     {
         private readonly CancellationTokenSource _tokenSource = new();
@@ -25,7 +25,7 @@ namespace EndpointProtector.Services
 
             do
             {
-                ramRepository.Insert(GetRamInfo());
+                //ramRepository.Insert(GetRamInfo());
             } while (await periodicTimer.WaitForNextTickAsync(stoppingToken) && _tokenSource.IsCancellationRequested is false);
         }
 

@@ -1,4 +1,4 @@
-﻿using Common.Contracts.Models;
+﻿using Common.Contracts.Models.Ws;
 using EndpointProtector.Models.Ram;
 
 namespace Database.Models
