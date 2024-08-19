@@ -1,11 +1,12 @@
 ﻿using Database.Contracts;
 using EndpointProtector.Business.Models;
+using EndpointProtector.Operators.Contracts;
 using System.Diagnostics;
 using System.Security.Cryptography;
 
 namespace EndpointProtector.Operators
 {
-	public class ProgramOperator : IProgramOperator
+    public class ProgramOperator : IProgramOperator
 	{
 		private readonly IProgramRepository _programRepository;
 
@@ -14,7 +15,7 @@ namespace EndpointProtector.Operators
 			_programRepository = programRepository;
 		}
 
-		private string CalculateFileHash(string filePath)
+		public static string CalculateFileHash(string filePath)
 		{
 			byte[] hash;
 			using (var hash512 = SHA512.Create())

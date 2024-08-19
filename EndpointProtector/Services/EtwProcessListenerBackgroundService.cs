@@ -1,56 +1,50 @@
-﻿using EndpointProtector.Operators;
+﻿using EndpointProtector.Operators.Contracts;
 using Microsoft.Diagnostics.Tracing.Parsers;
 using Microsoft.Diagnostics.Tracing.Session;
 using System.Diagnostics;
 
 namespace EndpointProtector.Services
 {
-	internal class EtwProcessListenerBackgroundService : BackgroundService
-    {        
-        private readonly TraceEventSession _traceEventSession;
-        private readonly IProgramOperator _programOperator;
-
-		public EtwProcessListenerBackgroundService(IProgramOperator programOperator)
-		{
-			_traceEventSession = new TraceEventSession(KernelTraceEventParser.KernelSessionName);
-			_programOperator = programOperator;
-		}
+	internal class EtwProcessListenerBackgroundService(IProgramOperator programOperator, IProcessOperator processOperator) : BackgroundService
+	{
+		private readonly TraceEventSession _traceEventSession = new TraceEventSession(KernelTraceEventParser.KernelSessionName);
 
 		private void Kernel_ProcessStart(Microsoft.Diagnostics.Tracing.Parsers.Kernel.ProcessTraceData data)
-        {
-            string message = $"[ETW] {data.ProcessName} started";
-            
-            Console.WriteLine(message);
+		{
+			string message = $"[ETW] {data.ProcessName} started";
 
-            try
-            {
-                var process = Process.GetProcessById(data.ProcessID);
-				_programOperator.HandleProgramManagement(process);
+			Console.WriteLine(message);
+
+			try
+			{
+				var process = Process.GetProcessById(data.ProcessID);
+				programOperator.HandleProgramManagement(process);
+				processOperator.HandleNewProcess(process);
 			}
-            catch (Exception e)
-            {
-                //ignored
-            }
-        }
+			catch (Exception e)
+			{
+				//ignored
+			}
+		}
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            _traceEventSession.EnableKernelProvider(KernelTraceEventParser.Keywords.Process);
+		protected override Task ExecuteAsync(CancellationToken stoppingToken)
+		{
+			_traceEventSession.EnableKernelProvider(KernelTraceEventParser.Keywords.Process);
 
-            _traceEventSession.Source.Kernel.ProcessStart += Kernel_ProcessStart;
+			_traceEventSession.Source.Kernel.ProcessStart += Kernel_ProcessStart;
 
-            Task.Run(() => _traceEventSession.Source.Process());
+			Task.Run(() => _traceEventSession.Source.Process());
 
-            return Task.CompletedTask;
-        }
+			return Task.CompletedTask;
+		}
 
-        public override Task StopAsync(CancellationToken cancellationToken)
-        {
-            _traceEventSession.Source.Kernel.ProcessStart -= Kernel_ProcessStart;
-            _traceEventSession.Source.StopProcessing();
-            _traceEventSession.Stop();
-            _traceEventSession.Dispose();
-            return base.StopAsync(cancellationToken);
-        }
-    }
+		public override Task StopAsync(CancellationToken cancellationToken)
+		{
+			_traceEventSession.Source.Kernel.ProcessStart -= Kernel_ProcessStart;
+			_traceEventSession.Source.StopProcessing();
+			_traceEventSession.Stop();
+			_traceEventSession.Dispose();
+			return base.StopAsync(cancellationToken);
+		}
+	}
 }

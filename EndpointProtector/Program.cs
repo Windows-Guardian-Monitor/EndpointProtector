@@ -5,6 +5,7 @@ using Database.Contracts;
 using Database.Repositories;
 using EndpointProtector.Database;
 using EndpointProtector.Operators;
+using EndpointProtector.Operators.Contracts;
 using EndpointProtector.Providers;
 using EndpointProtector.Services;
 using Microsoft.EntityFrameworkCore;
@@ -30,9 +31,11 @@ internal class Program
    //         services.AddTransient<ICpuUsageRepository, CpuUsageInfoRepository>();
             services.AddTransient<IWindowsWorkstationRepository, WsRepository>();
             services.AddTransient<IProgramRepository, ProgramRepository>();
+            services.AddTransient<IClientRuleRepository, ClientRuleRepository>();
 
             services.AddTransient<IPeriodicTimerProvider, PeriodicTimerProvider>();
             services.AddTransient<IProgramOperator, ProgramOperator>();
+            services.AddTransient<IProcessOperator, ProcessOperator>();
 
             services.AddSingleton<IDatabaseContext, MonitoringContext>();
 
@@ -43,6 +46,7 @@ internal class Program
             services.AddHostedService<InformationRetrieverBackgroundService>();
             services.AddHostedService<SynchronizationBackgroundService>();
             services.AddHostedService<CurrentProcessScannerBackgroundService>();
+            services.AddHostedService<RuleHandlerBackgroundService>();
         });
     }
 

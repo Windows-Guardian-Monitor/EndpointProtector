@@ -16,7 +16,11 @@ namespace Database.Repositories
 			_databaseContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
 		}
 
-		public void DeleteAll() => _databaseContext.Programs.RemoveRange(_databaseContext.Programs);
+		public void DeleteAll()
+		{
+			_databaseContext.Programs.RemoveRange(_databaseContext.Programs);
+			_databaseContext.SaveChanges();
+		}
 
 		public bool Exists(string hash) => _databaseContext.Programs.Any(p => p.Hash.Equals(hash, StringComparison.OrdinalIgnoreCase));
 

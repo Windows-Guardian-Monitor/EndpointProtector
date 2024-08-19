@@ -1,4 +1,5 @@
 ﻿using Database.Models;
+using Database.Models.Rules;
 using Microsoft.EntityFrameworkCore;
 
 namespace Database
@@ -21,5 +22,9 @@ namespace Database
 		public DbSet<DbOsInfo> OperationalSystems { get; set; }
 		public DbSet<DbDiskInfo> Disks { get; set; }
 		public DbSet<DbProgram> Programs { get; set; }
-	}
+
+
+		public DbSet<DbClientRule> ClientRules { get; set; }
+        public DbSet<DbClientRuleProgram> ProgramRules { get; set; }
+    }
 }
