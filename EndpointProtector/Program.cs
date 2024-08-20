@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging.EventLog;
 
 internal class Program
 {
-    private const string _logName = "Test";
+    private const string _logName = "EPS";
     private const string _sourceName = "Endpoint Protection Service";
 
     private static void ConfigureServices(IHostBuilder builder)

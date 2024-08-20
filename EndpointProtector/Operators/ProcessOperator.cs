@@ -8,10 +8,12 @@ namespace EndpointProtector.Operators
     internal class ProcessOperator : IProcessOperator
     {
         private readonly IClientRuleRepository _clientRuleRepository;
+        private readonly ILogger<ProcessOperator> _logger;
 
-        public ProcessOperator(IClientRuleRepository clientRuleRepository)
+        public ProcessOperator(IClientRuleRepository clientRuleRepository, ILogger<ProcessOperator> logger)
         {
             _clientRuleRepository = clientRuleRepository;
+            _logger = logger;
         }
 
         public void HandleNewProcess(Process process)
@@ -46,6 +48,8 @@ namespace EndpointProtector.Operators
                         timeoutInSeconds,
                         out _,
                         false);
+
+                    _logger.LogWarning(message);
                 }
             }
             catch (Exception e)
