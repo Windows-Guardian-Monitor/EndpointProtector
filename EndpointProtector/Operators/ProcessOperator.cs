@@ -54,7 +54,7 @@ namespace EndpointProtector.Operators
             }
             catch (Exception e)
             {
-
+                _logger.LogError(e, "Erro ao finalizar o processo");
             }
         }
     }
