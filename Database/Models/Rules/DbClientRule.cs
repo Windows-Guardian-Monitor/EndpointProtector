@@ -5,20 +5,25 @@ namespace Database.Models.Rules
 {
 	public class DbClientRule
     {
-		public DbClientRule(List<DbClientRuleProgram> programs)
+		public DbClientRule(List<DbClientRuleProgram> programs, string name)
 		{
 			Programs = programs;
+			Name = name;
 		}
 
-        public DbClientRule()
+		public DbClientRule()
         {
             
         }
 
         [Key]
-        public int Id { get; set; }
+		[JsonPropertyName("RuleId")]
+		public int Id { get; set; }
 
         [JsonPropertyName("Programs")]
         public List<DbClientRuleProgram> Programs { get; set; }
-    }
+
+		[JsonPropertyName("Name")]
+		public string Name { get; set; }
+	}
 }
