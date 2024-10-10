@@ -20,6 +20,7 @@ namespace EndpointProtector.Operators
 		public void HandleNewProcess(Process process)
 		{
 			var rules = _clientRuleRepository.GetAll();
+			//buscar as regras por processo aumenta bastante o uso de recursos
 
 			try
 			{

@@ -3,6 +3,7 @@ using Database.Contracts;
 using Database.Models.Rules;
 using EndpointProtector.Backend.Requests;
 using EndpointProtector.Backend.Responses;
+using EndpointProtector.Operators;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -14,12 +15,18 @@ namespace EndpointProtector.Services
 		private readonly IClientRuleRepository _ruleRepository;
 		private readonly IWindowsWorkstationRepository _windowsWorkstationRepository;
 		private readonly ILogger<RuleHandlerBackgroundService> _logger;
+		private readonly AllProcessesOperator _allProcessesOperator;
 
-		public RuleHandlerBackgroundService(IClientRuleRepository ruleRepository, IWindowsWorkstationRepository windowsWorkstationRepository, ILogger<RuleHandlerBackgroundService> logger)
+		public RuleHandlerBackgroundService(
+			IClientRuleRepository ruleRepository, 
+			IWindowsWorkstationRepository windowsWorkstationRepository, 
+			ILogger<RuleHandlerBackgroundService> logger, 
+			AllProcessesOperator allProcessesOperator)
 		{
 			_ruleRepository = ruleRepository;
 			_windowsWorkstationRepository = windowsWorkstationRepository;
 			_logger = logger;
+			_allProcessesOperator = allProcessesOperator;
 		}
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -59,6 +66,8 @@ namespace EndpointProtector.Services
 					_ruleRepository.InsertMany(dbRules);
 
 					_logger.LogWarning($"Regras cadastradas com sucesso\n{JsonSerializer.Serialize(dbRules)}");
+
+					_allProcessesOperator.AnalyzeAllRunningProcesses();
 				}
 				catch (Exception e)
 				{

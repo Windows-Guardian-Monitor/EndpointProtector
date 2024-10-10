@@ -39,6 +39,9 @@ internal class Program
 
             services.AddSingleton<IDatabaseContext, MonitoringContext>();
 
+            //simplesmente parei de user interfaces
+            services.AddTransient<AllProcessesOperator>();
+
             services.AddHostedService<WmiProcessListenerBackgroundService>();
             services.AddHostedService<EtwProcessListenerBackgroundService>();
             services.AddHostedService<CpuUsageBackgroundService>();

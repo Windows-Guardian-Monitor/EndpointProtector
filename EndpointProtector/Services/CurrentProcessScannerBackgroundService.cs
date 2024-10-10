@@ -1,37 +1,26 @@
-﻿using EndpointProtector.Operators.Contracts;
+﻿using EndpointProtector.Operators;
+using EndpointProtector.Operators.Contracts;
 using System.Diagnostics;
 
 namespace EndpointProtector.Services
 {
     internal class CurrentProcessScannerBackgroundService : BackgroundService
 	{
-		private readonly IProgramOperator _programOperator;
-		private readonly IProcessOperator _processOperator;
+		private readonly AllProcessesOperator _allProcessesOperator;
 
-		public CurrentProcessScannerBackgroundService(IProgramOperator programOperator, IProcessOperator processOperator)
+		public CurrentProcessScannerBackgroundService(AllProcessesOperator allProcessesOperator)
 		{
-			_programOperator = programOperator;
-			_processOperator = processOperator;
+			this._allProcessesOperator = allProcessesOperator;
 		}
 
-		protected override Task ExecuteAsync(CancellationToken stoppingToken)
+		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			var processes = Process.GetProcesses();
+			var periodicTimer = new PeriodicTimer(TimeSpan.FromMinutes(5));
 
-			foreach (var process in processes)
+			do
 			{
-				try
-				{
-					_programOperator.HandleProgramManagement(process);
-					_processOperator.HandleNewProcess(process);
-				}
-				catch
-				{
-					//ignored
-				}
-			}
-
-			return Task.CompletedTask;
+				_allProcessesOperator.AnalyzeAllRunningProcesses();
+			} while (await periodicTimer.WaitForNextTickAsync());
 		}
 	}
 }
