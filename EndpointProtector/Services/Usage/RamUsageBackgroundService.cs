@@ -4,9 +4,9 @@ using Common.Contracts.Providers;
 using EndpointProtector.Business.Models.Ws;
 using Vanara.PInvoke;
 
-namespace EndpointProtector.Services
+namespace EndpointProtector.Services.Usage
 {
-	internal class RamUsageBackgroundService(
+    internal class RamUsageBackgroundService(
         //IRamUsageInfoRepository ramRepository,
         IPeriodicTimerProvider periodicTimerProvider) : BackgroundService
     {

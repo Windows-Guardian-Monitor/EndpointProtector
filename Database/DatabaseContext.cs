@@ -1,4 +1,5 @@
 ﻿using Database.Models;
+using Database.Models.Reports;
 using Database.Models.Rules;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +26,9 @@ namespace Database
 
 
 		public DbSet<DbClientRule> ClientRules { get; set; }
-        public DbSet<DbClientRuleProgram> ProgramRules { get; set; }
-    }
+		public DbSet<DbClientRuleProgram> ProgramRules { get; set; }
+
+		public DbSet<DbProcessFinishedEvent> FinishedProcesses { get; set; }
+
+	}
 }

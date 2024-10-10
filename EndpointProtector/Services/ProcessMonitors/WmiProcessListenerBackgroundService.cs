@@ -3,17 +3,17 @@ using EndpointProtector.Operators.Contracts;
 using System.Diagnostics;
 using System.Management;
 
-namespace EndpointProtector.Services
+namespace EndpointProtector.Services.ProcessMonitors
 {
     internal class WmiProcessListenerBackgroundService(
-        ILogger<WmiProcessListenerBackgroundService> logger, 
+        ILogger<WmiProcessListenerBackgroundService> logger,
         IProgramOperator programOperator,
         IProcessOperator processOperator) : BackgroundService
     {
         private ManagementEventWatcher? _managementEventWatcher;
         private readonly ILogger<WmiProcessListenerBackgroundService> _logger = logger;
 
-		void ProcessArrived(object sender, EventArrivedEventArgs e)
+        void ProcessArrived(object sender, EventArrivedEventArgs e)
         {
             var wmiProcess = new WmiProcess
             {
@@ -29,9 +29,9 @@ namespace EndpointProtector.Services
             try
             {
                 var process = Process.GetProcessById((int)wmiProcess.ProcessId);
-				programOperator.HandleProgramManagement(process, wmiProcess.ProcessName);
-				processOperator.HandleNewProcess(process);
-			}
+                programOperator.HandleProgramManagement(process, wmiProcess.ProcessName);
+                processOperator.HandleNewProcess(process);
+            }
             catch
             {
                 //ignored

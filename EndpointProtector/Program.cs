@@ -8,6 +8,9 @@ using EndpointProtector.Operators;
 using EndpointProtector.Operators.Contracts;
 using EndpointProtector.Providers;
 using EndpointProtector.Services;
+using EndpointProtector.Services.ProcessMonitors;
+using EndpointProtector.Services.ServerCommunication;
+using EndpointProtector.Services.Usage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.EventLog;
 
@@ -32,8 +35,9 @@ internal class Program
             services.AddTransient<IWindowsWorkstationRepository, WsRepository>();
             services.AddTransient<IProgramRepository, ProgramRepository>();
             services.AddTransient<IClientRuleRepository, ClientRuleRepository>();
+            services.AddTransient<ProcessFinishedRepository>();
 
-            services.AddTransient<IPeriodicTimerProvider, PeriodicTimerProvider>();
+			services.AddTransient<IPeriodicTimerProvider, PeriodicTimerProvider>();
             services.AddTransient<IProgramOperator, ProgramOperator>();
             services.AddTransient<IProcessOperator, ProcessOperator>();
 

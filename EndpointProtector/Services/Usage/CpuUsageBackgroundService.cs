@@ -2,9 +2,9 @@
 using EndpointProtector.Business.Models.Ws;
 using System.Diagnostics;
 
-namespace EndpointProtector.Services
+namespace EndpointProtector.Services.Usage
 {
-	internal class CpuUsageBackgroundService(
+    internal class CpuUsageBackgroundService(
         //ICpuUsageRepository cpuUsageRepository,
         IPeriodicTimerProvider periodicTimerProvider) : BackgroundService
     {

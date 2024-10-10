@@ -1,4 +1,7 @@
-﻿using Database.Contracts;
+﻿using Cassia;
+using Database.Contracts;
+using Database.Models.Reports;
+using Database.Repositories;
 using EndpointProtector.Operators.Contracts;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -10,11 +13,36 @@ namespace EndpointProtector.Operators
 	{
 		private readonly IClientRuleRepository _clientRuleRepository;
 		private readonly ILogger<ProcessOperator> _logger;
+		private readonly ProcessFinishedRepository _processFinishedRepository;
 
-		public ProcessOperator(IClientRuleRepository clientRuleRepository, ILogger<ProcessOperator> logger)
+		public ProcessOperator(IClientRuleRepository clientRuleRepository, ILogger<ProcessOperator> logger, ProcessFinishedRepository processFinishedRepository)
 		{
 			_clientRuleRepository = clientRuleRepository;
 			_logger = logger;
+			_processFinishedRepository = processFinishedRepository;
+		}
+
+		private void SaveProcessFinishedEvent(int sessionId, string fileName, string hash)
+		{
+			try
+			{
+				if (string.IsNullOrEmpty(fileName) &&
+					string.IsNullOrEmpty(hash))
+				{
+					return;
+				}
+
+				var terminalServicesManager = new TerminalServicesManager();
+				var session = terminalServicesManager.GetLocalServer().GetSession(sessionId);
+
+				var finishedEvent = new DbProcessFinishedEvent(session.UserName, session.DomainName, Environment.MachineName, hash, fileName);
+
+				_processFinishedRepository.Insert(finishedEvent);
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "Houve um erro ao tentar salvar as informações do processo finalizado");
+			}
 		}
 
 		public void HandleNewProcess(Process process)
@@ -22,14 +50,19 @@ namespace EndpointProtector.Operators
 			var rules = _clientRuleRepository.GetAll();
 			//buscar as regras por processo aumenta bastante o uso de recursos
 
+			var sessionId = 0;
+			var fileName = string.Empty;
+			var hash = string.Empty;
+
 			try
 			{
-				var fileName = process.MainModule.FileName;
+				fileName = process.MainModule.FileName;
 
-				var hash = ProgramOperator.CalculateFileHash(fileName);
+				hash = ProgramOperator.CalculateFileHash(fileName);
 
 				if (rules.Any(r => r.Programs.Any(p => p.Hash.Equals(hash, StringComparison.OrdinalIgnoreCase))))
 				{
+					sessionId = process.SessionId;
 					process.Kill(true);
 
 					const string applicationBlocked = "Aplicação Bloqueada";
@@ -52,6 +85,8 @@ namespace EndpointProtector.Operators
 						false);
 
 					_logger.LogWarning(message);
+
+					SaveProcessFinishedEvent(sessionId, fileName, hash);
 				}
 			}
 			catch (InvalidOperationException) { /*ignored*/ }
@@ -60,6 +95,8 @@ namespace EndpointProtector.Operators
 			{
 				_logger.LogError(e, "Erro ao finalizar o processo");
 			}
+
+			
 		}
 	}
 }

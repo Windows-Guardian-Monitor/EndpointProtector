@@ -5,7 +5,7 @@ using Vanara.PInvoke;
 
 namespace EndpointProtector.Services
 {
-	internal class InformationRetrieverBackgroundService : BackgroundService
+    internal class InformationRetrieverBackgroundService : BackgroundService
     {
         private readonly IWindowsWorkstationRepository _windowsWorkstationRepository;
 
@@ -98,7 +98,7 @@ namespace EndpointProtector.Services
                 RamInfo = ramInfo,
                 Uuid = uuid,
                 HostName = Environment.MachineName
-			};
+            };
 
             _windowsWorkstationRepository.Upsert(workstation);
 
