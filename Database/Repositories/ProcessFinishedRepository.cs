@@ -22,5 +22,11 @@ namespace Database.Repositories
 		}
 
 		public List<DbProcessFinishedEvent> GetAll() => _databaseContext.FinishedProcesses.ToList();
+
+		public void DeleteAll()
+		{
+			_databaseContext.FinishedProcesses.RemoveRange(_databaseContext.FinishedProcesses);
+			_databaseContext.SaveChanges();
+		}
 	}
 }

@@ -11,7 +11,7 @@ namespace Database.Models.Reports
 			MachineName = machineName;
 			ProgramHash = programHash;
 			ProgramPath = programPath;
-			NowTimestamp = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
+			Timestamp = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
 		}
 
 		[JsonIgnore]
