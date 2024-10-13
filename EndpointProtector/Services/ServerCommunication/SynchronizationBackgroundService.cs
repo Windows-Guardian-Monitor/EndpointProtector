@@ -94,7 +94,7 @@ namespace EndpointProtector.Services.ServerCommunication
 
 					const string url = "https://localhost:7102/Program/Send";
 
-					var dbPrograms = programs.Select(p => new ProgramRequest(p.Path, p.Name, p.Hash));
+					var dbPrograms = programs.Select(p => new ProgramRequestItem(p.Path, p.Name, p.Hash)).ToList();
 
 					var response = await httpClient.PostAsJsonAsync(url, JsonSerializer.SerializeToUtf8Bytes(dbPrograms), stoppingToken);
 

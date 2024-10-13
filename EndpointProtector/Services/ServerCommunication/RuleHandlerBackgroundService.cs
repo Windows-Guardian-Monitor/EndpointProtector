@@ -48,7 +48,7 @@ namespace EndpointProtector.Services.ServerCommunication
 
                     var machine = _windowsWorkstationRepository.GetFirst();
 
-                    var response = await httpClient.PostAsJsonAsync(url, new GetRuleByWsRequest() { MachineUuid = "radical" });
+                    var response = await httpClient.PostAsJsonAsync(url, new GetRuleByWsRequest() { Hostname = Environment.MachineName });
 
                     var json = await response.Content.ReadAsStringAsync();
 
@@ -80,7 +80,7 @@ namespace EndpointProtector.Services.ServerCommunication
 
     public class GetRuleByWsRequest
     {
-        [JsonPropertyName("MachineUuid")]
-        public string MachineUuid { get; set; }
+        [JsonPropertyName("Hostname")]
+        public string Hostname { get; set; }
     }
 }
