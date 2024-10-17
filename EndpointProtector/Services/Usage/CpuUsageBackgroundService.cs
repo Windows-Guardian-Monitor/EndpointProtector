@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.Contracts.Providers;
+using Common.Extensions;
 using EndpointProtector.Backend.Responses;
 using EndpointProtector.Business.Models.Performance;
 using System.Diagnostics;
@@ -36,7 +37,7 @@ namespace EndpointProtector.Services.Usage
 
                     var cpuPerformanceModel = new CpuPerformanceModel()
                     {
-                        CpuUsagePercentage = ConvertToPercentage(usageValue),
+                        CpuUsagePercentage = usageValue.ToTwoPointString(),
                     };
 
                     var url = $"{InformationHandler.GetUrl()}Performance/SendCpuPerformanceInformation";
@@ -60,11 +61,6 @@ namespace EndpointProtector.Services.Usage
                     logger.LogError(e.Message);
                 }
             } while (await periodicTimer.WaitForNextTickAsync() && _tokenSource.IsCancellationRequested is false);
-        }
-
-        private string ConvertToPercentage(float p)
-        {
-            return $"{p:0.00}%";
         }
 
         public override Task StopAsync(CancellationToken cancellationToken)

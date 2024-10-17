@@ -13,9 +13,9 @@ namespace Database.DAL
         {
             var dbRamInfo = new DbRamUsage
             {
-                AvailableMemory = item.AvailableMemory,
+                TotalAvailableMemory = item.TotalAvailableMemory,
                 PercentOfMemoryUsage = item.PercentOfMemoryUsage,
-                UsedMemory = item.UsedMemory
+                AvailableMemory = item.AvailableMemory
             };
 
             databaseContext.GetSpecificCollection<DbRamUsage>().Insert(dbRamInfo);

@@ -8,6 +8,6 @@ namespace EndpointProtector.Business.Models.Performance
 		public string RamUsagePercentage { get; set; } = string.Empty;
 
 		[JsonPropertyName("MachineName")]
-		public string MachineName { get; set; }
+		public string MachineName { get; set; } = Environment.MachineName;
 	}
 }
