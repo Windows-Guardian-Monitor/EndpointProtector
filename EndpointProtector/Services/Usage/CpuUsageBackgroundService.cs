@@ -1,12 +1,14 @@
 ﻿using Common;
 using Common.Contracts.Providers;
+using EndpointProtector.Backend.Responses;
 using EndpointProtector.Business.Models.Performance;
 using System.Diagnostics;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace EndpointProtector.Services.Usage
 {
-	internal class CpuUsageBackgroundService(
+    internal class CpuUsageBackgroundService(
         IPeriodicTimerProvider periodicTimerProvider,
         ILogger<CpuUsageBackgroundService> logger) : BackgroundService
     {
@@ -15,45 +17,57 @@ namespace EndpointProtector.Services.Usage
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-			_httpClient = new HttpClient();
+            _httpClient = new HttpClient();
 
-			var cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+            var cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
 
             var periodicTimer = periodicTimerProvider.GetServicesPeriodicTimer();
 
             do
             {
-                //var dbCpuUsage = new CpuUsageInfo
-                //{
-                //    CpuUsage = cpuCounter.NextValue()
-                //};
-
                 try
                 {
-					var cpuPerformanceModel = new CpuPerformanceModel()
-					{
-						CpuUsagePercentage = ConvertToPercentage(cpuCounter.NextValue()),
-					};
+                    var usageValue = cpuCounter.NextValue();
+
+                    if (usageValue is 0)
+                    {
+                        continue;
+                    }
+
+                    var cpuPerformanceModel = new CpuPerformanceModel()
+                    {
+                        CpuUsagePercentage = ConvertToPercentage(usageValue),
+                    };
 
                     var url = $"{InformationHandler.GetUrl()}Performance/SendCpuPerformanceInformation";
 
-                    //TODO CONTINUAR DAQUI, VER SE É POSSÍVEL ENVIAR A INFO DO PROCESSADOR P API
+                    var json = JsonSerializer.Serialize(cpuPerformanceModel);
 
-					var r = await _httpClient.PostAsJsonAsync(url, cpuPerformanceModel, cancellationToken: stoppingToken);
-				}
+                    var r = await _httpClient.PostAsJsonAsync(url, json, cancellationToken: stoppingToken);
+
+                    json = await r.Content.ReadAsStringAsync();
+
+                    var response = JsonSerializer.Deserialize<StandardResponse>(json);
+
+                    if (response.Success is false)
+                    {
+                        logger.LogError(response.Message);
+                        continue;
+                    }
+                }
                 catch (Exception e)
                 {
                     logger.LogError(e.Message);
-				}
-			} while (await periodicTimer.WaitForNextTickAsync() && _tokenSource.IsCancellationRequested is false);
+                }
+            } while (await periodicTimer.WaitForNextTickAsync() && _tokenSource.IsCancellationRequested is false);
         }
 
-		private string ConvertToPercentage(float p)
-		{
-			return $"{p}%";
-		}
+        private string ConvertToPercentage(float p)
+        {
+            return $"{p:0.00}%";
+        }
 
-		public override Task StopAsync(CancellationToken cancellationToken)
+        public override Task StopAsync(CancellationToken cancellationToken)
         {
             _tokenSource.Cancel();
             return base.StopAsync(cancellationToken);

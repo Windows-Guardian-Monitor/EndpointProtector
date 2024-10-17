@@ -25,6 +25,7 @@ namespace EndpointProtector.Services.Usage
 
             do
             {
+                var info = GetRamInfo();
                 //ramRepository.Insert(GetRamInfo());
             } while (await periodicTimer.WaitForNextTickAsync(stoppingToken) && _tokenSource.IsCancellationRequested is false);
         }

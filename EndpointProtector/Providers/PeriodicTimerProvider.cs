@@ -4,8 +4,8 @@ namespace EndpointProtector.Providers
 {
 	internal class PeriodicTimerProvider : IPeriodicTimerProvider
 	{
-		private const int IntervalInSeconds = 1;
+		private const int IntervalInSeconds = 10;
 
-		public PeriodicTimer GetServicesPeriodicTimer() => new PeriodicTimer(TimeSpan.FromDays(IntervalInSeconds));
+		public PeriodicTimer GetServicesPeriodicTimer() => new PeriodicTimer(TimeSpan.FromSeconds(IntervalInSeconds));
 	}
 }

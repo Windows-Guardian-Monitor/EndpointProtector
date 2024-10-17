@@ -8,6 +8,6 @@ namespace EndpointProtector.Business.Models.Performance
 		public string CpuUsagePercentage { get; set; } = string.Empty;
 
 		[JsonPropertyName("MachineName")]
-		public string MachineName { get; set; }
+		public string MachineName { get; set; } = Environment.MachineName;
 	}
 }
