@@ -66,7 +66,7 @@ namespace EndpointProtector.Services.Usage
             } while (await periodicTimer.WaitForNextTickAsync(stoppingToken) && _tokenSource.IsCancellationRequested is false);
         }
 
-        private string ConvertToPercentage(uint value) => $"{value}%";
+        private string ConvertToPercentage(uint value) => $"{value}";
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
