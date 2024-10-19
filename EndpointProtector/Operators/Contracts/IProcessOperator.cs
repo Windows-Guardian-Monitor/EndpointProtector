@@ -2,7 +2,7 @@
 
 namespace EndpointProtector.Operators.Contracts
 {
-    internal interface IProcessOperator
+    public interface IProcessOperator
     {
         void HandleNewProcess(Process process);
     }

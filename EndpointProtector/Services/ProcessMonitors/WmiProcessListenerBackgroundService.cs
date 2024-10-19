@@ -1,14 +1,16 @@
 ﻿using EndpointProtector.Business.Models;
+using EndpointProtector.Operators;
 using EndpointProtector.Operators.Contracts;
 using System.Diagnostics;
 using System.Management;
 
 namespace EndpointProtector.Services.ProcessMonitors
 {
-    internal class WmiProcessListenerBackgroundService(
+	internal class WmiProcessListenerBackgroundService(
         ILogger<WmiProcessListenerBackgroundService> logger,
         IProgramOperator programOperator,
-        IProcessOperator processOperator) : BackgroundService
+        IProcessOperator processOperator,
+		RuleSynchronizer ruleSynchronizer) : BackgroundService
     {
         private ManagementEventWatcher? _managementEventWatcher;
         private readonly ILogger<WmiProcessListenerBackgroundService> _logger = logger;
@@ -41,12 +43,13 @@ namespace EndpointProtector.Services.ProcessMonitors
             Console.WriteLine(message);
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _managementEventWatcher = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStartTrace"));
+			await ruleSynchronizer.UpdateRules();
+
+			_managementEventWatcher = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_ProcessStartTrace"));
             _managementEventWatcher.EventArrived += new EventArrivedEventHandler(ProcessArrived);
             _managementEventWatcher.Start();
-            return Task.CompletedTask;
         }
 
         public override Task StopAsync(CancellationToken cancellationToken)

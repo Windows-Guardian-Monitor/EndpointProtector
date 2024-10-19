@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace EndpointProtector.Operators
 {
-	internal class AllProcessesOperator
+	public class AllProcessesOperator
 	{
 	private readonly IProgramOperator _programOperator;
 	private readonly IProcessOperator _processOperator;

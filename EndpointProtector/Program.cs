@@ -40,6 +40,7 @@ internal class Program
 			services.AddTransient<IPeriodicTimerProvider, PeriodicTimerProvider>();
             services.AddTransient<IProgramOperator, ProgramOperator>();
             services.AddTransient<IProcessOperator, ProcessOperator>();
+            services.AddTransient<RuleSynchronizer>();
 
             services.AddSingleton<IDatabaseContext, MonitoringContext>();
 

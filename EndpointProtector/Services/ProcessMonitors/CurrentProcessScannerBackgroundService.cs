@@ -1,23 +1,25 @@
 ﻿using EndpointProtector.Operators;
-using EndpointProtector.Operators.Contracts;
-using System.Diagnostics;
 
 namespace EndpointProtector.Services.ProcessMonitors
 {
-    internal class CurrentProcessScannerBackgroundService : BackgroundService
+	internal class CurrentProcessScannerBackgroundService : BackgroundService
     {
         private readonly AllProcessesOperator _allProcessesOperator;
+		private readonly RuleSynchronizer _ruleSynchronizer;
 
-        public CurrentProcessScannerBackgroundService(AllProcessesOperator allProcessesOperator)
-        {
-            _allProcessesOperator = allProcessesOperator;
-        }
+		public CurrentProcessScannerBackgroundService(AllProcessesOperator allProcessesOperator, RuleSynchronizer ruleSynchronizer)
+		{
+			_allProcessesOperator = allProcessesOperator;
+			_ruleSynchronizer = ruleSynchronizer;
+		}
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var periodicTimer = new PeriodicTimer(TimeSpan.FromMinutes(5));
 
-            do
+            await _ruleSynchronizer.UpdateRules();
+
+			do
             {
                 _allProcessesOperator.AnalyzeAllRunningProcesses();
             } while (await periodicTimer.WaitForNextTickAsync());

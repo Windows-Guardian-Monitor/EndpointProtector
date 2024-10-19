@@ -1,11 +1,15 @@
-﻿using EndpointProtector.Operators.Contracts;
+﻿using EndpointProtector.Operators;
+using EndpointProtector.Operators.Contracts;
 using Microsoft.Diagnostics.Tracing.Parsers;
 using Microsoft.Diagnostics.Tracing.Session;
 using System.Diagnostics;
 
 namespace EndpointProtector.Services.ProcessMonitors
 {
-    internal class EtwProcessListenerBackgroundService(IProgramOperator programOperator, IProcessOperator processOperator) : BackgroundService
+	internal class EtwProcessListenerBackgroundService(
+        IProgramOperator programOperator, 
+        IProcessOperator processOperator,
+		RuleSynchronizer ruleSynchronizer) : BackgroundService
     {
         private readonly TraceEventSession _traceEventSession = new TraceEventSession(KernelTraceEventParser.KernelSessionName);
 
@@ -27,15 +31,15 @@ namespace EndpointProtector.Services.ProcessMonitors
             }
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _traceEventSession.EnableKernelProvider(KernelTraceEventParser.Keywords.Process);
+            await ruleSynchronizer.UpdateRules();
+
+			_traceEventSession.EnableKernelProvider(KernelTraceEventParser.Keywords.Process);
 
             _traceEventSession.Source.Kernel.ProcessStart += Kernel_ProcessStart;
 
             Task.Run(() => _traceEventSession.Source.Process());
-
-            return Task.CompletedTask;
         }
 
         public override Task StopAsync(CancellationToken cancellationToken)
