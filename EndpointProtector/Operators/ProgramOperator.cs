@@ -1,18 +1,26 @@
-﻿using Database.Contracts;
+﻿using Common;
+using Database.Contracts;
+using Database.Models;
+using EndpointProtector.Backend.Responses;
 using EndpointProtector.Business.Models;
 using EndpointProtector.Operators.Contracts;
 using System.Diagnostics;
+using System.Net.Http.Json;
 using System.Security.Cryptography;
+using System.Text.Json;
 
 namespace EndpointProtector.Operators
 {
-    public class ProgramOperator : IProgramOperator
+	public class ProgramOperator : IProgramOperator
 	{
 		private readonly IProgramRepository _programRepository;
+		private readonly ILogger<ProgramOperator> _logger;
+		private readonly HttpClient _httpClient = new();
 
-		public ProgramOperator(IProgramRepository programRepository)
+		public ProgramOperator(IProgramRepository programRepository, ILogger<ProgramOperator> logger)
 		{
 			_programRepository = programRepository;
+			_logger = logger;
 		}
 
 		public static string CalculateFileHash(string filePath)
@@ -73,7 +81,33 @@ namespace EndpointProtector.Operators
 
 			var program = new BusinessProgram(fileName, processName, fileHash);
 
+			Task.Run(() => SendToServer(program));
+
 			_programRepository.Insert(program);
+		}
+
+		private async Task SendToServer(DbProgramWithExecutionTime dbProgramWithExecutionTime)
+		{
+			try
+			{
+				var r = await _httpClient.PostAsJsonAsync($"{InformationHandler.GetUrl()}Program/SendProgramWithExecutionTime", JsonSerializer.Serialize(dbProgramWithExecutionTime));
+
+				var json = await r.Content.ReadAsStringAsync();
+
+				var standardResponse = JsonSerializer.Deserialize<StandardResponse>(json);
+
+				if (standardResponse != null)
+				{
+					if (!standardResponse.Success)
+					{
+						throw new Exception(standardResponse.Message);
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e.Message);
+			}
 		}
 	}
 }

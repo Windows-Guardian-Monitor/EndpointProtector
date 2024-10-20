@@ -16,5 +16,6 @@ namespace EndpointProtector.Business.Models
 		public string Hash { get; set; }
 
 		public static implicit operator DbProgram(BusinessProgram program) => new DbProgram(program.Path, program.Name, program.Hash);
+		public static implicit operator DbProgramWithExecutionTime(BusinessProgram program) => new DbProgramWithExecutionTime(program.Path, program.Name);
 	}
 }
