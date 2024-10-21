@@ -1,4 +1,4 @@
-﻿using Common.Contracts.Models;
+﻿using Common.Contracts.Models.Ws;
 using EndpointProtector.Models.Ram;
 
 namespace Database.Models
@@ -7,7 +7,7 @@ namespace Database.Models
     {
         public int Id { get; set; }
         public uint PercentOfMemoryUsage { get; set; }
-        public Storage UsedMemory { get; set; }
         public Storage AvailableMemory { get; set; }
+        public Storage TotalAvailableMemory { get; set; }
     }
 }

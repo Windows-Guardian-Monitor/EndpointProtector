@@ -8,4 +8,9 @@
 		<SupportedOSPlatformVersion>8.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <Folder Include="Contracts\DAL\" />
+	  <Folder Include="Contracts\Operators\" />
+	</ItemGroup>
+
 </Project>

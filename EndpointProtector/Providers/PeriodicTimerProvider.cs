@@ -1,11 +1,11 @@
 ﻿using Common.Contracts.Providers;
 
-namespace EndpointProtector.Rules
+namespace EndpointProtector.Providers
 {
-    internal class PeriodicTimerProvider : IPeriodicTimerProvider
-    {
-        private const int IntervalInSeconds = 1;
+	internal class PeriodicTimerProvider : IPeriodicTimerProvider
+	{
+		private const int IntervalInSeconds = 10;
 
-        public PeriodicTimer GetServicesPeriodicTimer() => new PeriodicTimer(TimeSpan.FromSeconds(IntervalInSeconds));
-    }
+		public PeriodicTimer GetServicesPeriodicTimer() => new PeriodicTimer(TimeSpan.FromSeconds(IntervalInSeconds));
+	}
 }

@@ -1,10 +1,9 @@
-﻿using Common.Contracts.DAL;
-using Common.Contracts.Models;
+﻿using Common.Contracts.Models.Ws;
 using Database.Models;
 
 namespace Database.DAL
 {
-    public class RamUsageRepository(IDatabaseContext databaseContext) : IRamUsageInfoRepository
+	public class RamUsageRepository(IDatabaseContext databaseContext)
     {
         public void Delete(int id) => databaseContext.GetSpecificCollection<DbRamUsage>().Delete(id);
 
@@ -14,9 +13,9 @@ namespace Database.DAL
         {
             var dbRamInfo = new DbRamUsage
             {
-                AvailableMemory = item.AvailableMemory,
+                TotalAvailableMemory = item.TotalAvailableMemory,
                 PercentOfMemoryUsage = item.PercentOfMemoryUsage,
-                UsedMemory = item.UsedMemory
+                AvailableMemory = item.AvailableMemory
             };
 
             databaseContext.GetSpecificCollection<DbRamUsage>().Insert(dbRamInfo);

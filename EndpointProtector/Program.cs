@@ -1,28 +1,51 @@
 using Common.Contracts.DAL;
 using Common.Contracts.Providers;
 using Database;
-using Database.DAL;
+using Database.Contracts;
+using Database.Repositories;
 using EndpointProtector.Database;
-using EndpointProtector.Rules;
+using EndpointProtector.Operators;
+using EndpointProtector.Operators.Contracts;
+using EndpointProtector.Providers;
 using EndpointProtector.Services;
+using EndpointProtector.Services.ProcessMonitors;
+using EndpointProtector.Services.ServerCommunication;
+using EndpointProtector.Services.Usage;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.EventLog;
 
 internal class Program
 {
-    private const string _logName = "Test";
+    private const string _logName = "EPS";
     private const string _sourceName = "Endpoint Protection Service";
 
     private static void ConfigureServices(IHostBuilder builder)
     {
-        builder.ConfigureServices(services =>
+        builder.ConfigureServices((context, services) =>
         {
-            services.AddTransient<IRamUsageInfoRepository, RamUsageRepository>();
-            services.AddTransient<ICpuUsageRepository, CpuUsageInfoRepository>();
-            services.AddTransient<IWindowsWorkstationRepository, WindowsWorkstationRepository>();
+            
+			var conn = context.Configuration.GetConnectionString("ConnectionString");
+			services.AddMySql<DatabaseContext>(conn, ServerVersion.AutoDetect(conn), options =>
+            {
+                options.EnableStringComparisonTranslations();
+            });
 
-            services.AddTransient<IPeriodicTimerProvider, PeriodicTimerProvider>();
+			//services.AddTransient<IRamUsageInfoRepository, RamUsageRepository>();
+   //         services.AddTransient<ICpuUsageRepository, CpuUsageInfoRepository>();
+            services.AddTransient<IWindowsWorkstationRepository, WsRepository>();
+            services.AddTransient<IProgramRepository, ProgramRepository>();
+            services.AddTransient<IClientRuleRepository, ClientRuleRepository>();
+            services.AddTransient<ProcessFinishedRepository>();
+
+			services.AddTransient<IPeriodicTimerProvider, PeriodicTimerProvider>();
+            services.AddTransient<IProgramOperator, ProgramOperator>();
+            services.AddTransient<IProcessOperator, ProcessOperator>();
+            services.AddTransient<RuleSynchronizer>();
 
             services.AddSingleton<IDatabaseContext, MonitoringContext>();
+
+            //simplesmente parei de user interfaces
+            services.AddTransient<AllProcessesOperator>();
 
             services.AddHostedService<WmiProcessListenerBackgroundService>();
             services.AddHostedService<EtwProcessListenerBackgroundService>();
@@ -30,6 +53,8 @@ internal class Program
             services.AddHostedService<RamUsageBackgroundService>();
             services.AddHostedService<InformationRetrieverBackgroundService>();
             services.AddHostedService<SynchronizationBackgroundService>();
+            services.AddHostedService<CurrentProcessScannerBackgroundService>();
+            services.AddHostedService<RuleHandlerBackgroundService>();
         });
     }
 
@@ -65,6 +90,10 @@ internal class Program
         ConfigureLogging(builder);
 
         var host = builder.Build();
+
+        var scope = host.Services.CreateScope();
+
+        (scope.ServiceProvider.GetRequiredService<DatabaseContext>()).Database.EnsureCreated();
 
         host.Run();
     }

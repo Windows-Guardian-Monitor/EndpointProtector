@@ -5,9 +5,12 @@ namespace EndpointProtector.Backend.Responses
 {
     public class StandardResponse
     {
-        [JsonPropertyName("code")]
+        [JsonPropertyName("Code")]
         public HttpStatusCode Code { get; set; }
-        [JsonPropertyName("message")]
+        [JsonPropertyName("Message")]
         public string Message { get; set; }
-    }
+
+		[JsonPropertyName("Success")]
+		public bool Success { get; set; }
+	}
 }

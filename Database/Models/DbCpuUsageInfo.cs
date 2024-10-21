@@ -1,4 +1,4 @@
-﻿using Common.Contracts.Models;
+﻿using Common.Contracts.Models.Ws;
 
 namespace Database.Models
 {

@@ -1,5 +1,5 @@
 ﻿using Common.Contracts.DAL;
-using EndpointProtector.Business.Models;
+using EndpointProtector.Business.Models.Ws;
 using System.Management;
 using Vanara.PInvoke;
 
@@ -98,7 +98,7 @@ namespace EndpointProtector.Services
                 RamInfo = ramInfo,
                 Uuid = uuid,
                 HostName = Environment.MachineName
-			};
+            };
 
             _windowsWorkstationRepository.Upsert(workstation);
 
